@@ -4,6 +4,10 @@ from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 
+@app.route('/')
+def hello_fly():
+    return 'hello world'
+
 @app.route('/api/courses', methods=['GET'])
 def get_courses():
     url = "https://www.dhamma.org/ru/schedules/schdullabha"
