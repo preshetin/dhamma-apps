@@ -1,9 +1,13 @@
 from flask import Flask, jsonify, request
+from dotenv import load_dotenv
 import requests
 import os
 from bs4 import BeautifulSoup
 
 app = Flask(__name__)
+
+if os.getenv('FLASK_ENV') == 'development':
+    load_dotenv()
 
 @app.route('/')
 def hello_fly():
