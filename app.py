@@ -92,7 +92,7 @@ def webhook():
     
     return '', 200
 
-@app.route('/children-courses-org-webhook', methods=['POST'])
+@app.route('/webhook-children-courses-org', methods=['POST'])
 def webhook():
     update = request.get_json()
     if 'message' in update:
