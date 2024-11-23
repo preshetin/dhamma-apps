@@ -93,7 +93,7 @@ def webhook():
     return '', 200
 
 @app.route('/webhook-children-courses-org', methods=['POST'])
-def webhook():
+def webhook_children_courses_org():
     update = request.get_json()
     if 'message' in update:
         chat_id = update['message']['chat']['id']
