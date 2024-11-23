@@ -70,26 +70,43 @@ def get_courses():
 
 # Is My Car Okay Bot
 TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
+TELEGRAM_BOT_TOKEN_CHILDREN_COURSES_ORG = os.environ.get('TELEGRAM_BOT_TOKEN_CHILDREN_COURSES_ORG')
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 
 OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions'
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
-    print(111)
     update = request.get_json()
-    print(update)
     if 'message' in update:
         chat_id = update['message']['chat']['id']
         user_message = update['message']['text']
         
-        # Get response from OpenAI
-        # gpt_response = get_gpt_response(user_message)
-        response = get_answer_from_document(user_message)
+        # Define the index and namespace for Pincone vector database
+        index_name = "minsk-knowledge"
+        namespace = "minsk"
+        response = get_answer_from_document(user_message, index_name, namespace)
         
-        # Send response back to Telegram
-        send_message(chat_id, response)
+        bot_token = TELEGRAM_BOT_TOKEN 
+        send_message(chat_id, response, bot_token)
     
+    return '', 200
+
+@app.route('/children-courses-org-webhook', methods=['POST'])
+def webhook():
+    update = request.get_json()
+    if 'message' in update:
+        chat_id = update['message']['chat']['id']
+        user_message = update['message']['text']
+        
+        # Define the index and namespace for Pincone vector database
+        index_name = "children-courses-org"
+        namespace = "children-courses-org"
+
+        response = get_answer_from_document(user_message,index_name, namespace)
+
+        bot_token = TELEGRAM_BOT_TOKEN_CHILDREN_COURSES_ORG 
+        send_message(chat_id, response, bot_token)
     return '', 200
 
 def get_gpt_response(user_message):
@@ -111,8 +128,8 @@ def get_gpt_response(user_message):
     else:
         return "Sorry, I couldn't get a response from the AI."
 
-def send_message(chat_id, text):
-    url = f'https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage'
+def send_message(chat_id, text, bot_token):
+    url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
     payload = {
         'chat_id': chat_id,
         'text': text,
@@ -120,13 +137,10 @@ def send_message(chat_id, text):
     }
     requests.post(url, json=payload)
 
-def get_answer_from_document(message):
+def get_answer_from_document(message, index_name, namespace):
     # Initialize Pinecone
     pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
 
-    # Define the index and namespace
-    index_name = "minsk-knowledge"
-    namespace = "minsk"
 
     # Initialize the embeddings
     model_name = 'multilingual-e5-large'
