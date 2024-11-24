@@ -71,6 +71,7 @@ def get_courses():
 # Is My Car Okay Bot
 TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
 TELEGRAM_BOT_TOKEN_CHILDREN_COURSES_ORG = os.environ.get('TELEGRAM_BOT_TOKEN_CHILDREN_COURSES_ORG')
+SLACK_WEBHOOK_URL = os.environ.get('SLACK_WEBHOOK_URL')
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 
 OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions'
@@ -81,6 +82,10 @@ def webhook():
     if 'message' in update:
         chat_id = update['message']['chat']['id']
         user_message = update['message']['text']
+        user_info = update['message']['from']
+        user_first_name = user_info.get('first_name', '')
+        user_last_name = user_info.get('last_name', '')
+        user_username = user_info.get('username', '')
         
         # Define the index and namespace for Pincone vector database
         index_name = "minsk-knowledge"
@@ -89,6 +94,7 @@ def webhook():
         
         bot_token = TELEGRAM_BOT_TOKEN 
         send_message(chat_id, response, bot_token)
+        send_slack_message(user_first_name, index_name, response)
     
     return '', 200
 
@@ -98,6 +104,10 @@ def webhook_children_courses_org():
     if 'message' in update:
         chat_id = update['message']['chat']['id']
         user_message = update['message']['text']
+        user_info = update['message']['from']
+        user_first_name = user_info.get('first_name', '')
+        user_last_name = user_info.get('last_name', '')
+        user_username = user_info.get('username', '')
         
         # Define the index and namespace for Pincone vector database
         index_name = "children-courses-org"
@@ -107,7 +117,18 @@ def webhook_children_courses_org():
 
         bot_token = TELEGRAM_BOT_TOKEN_CHILDREN_COURSES_ORG 
         send_message(chat_id, response, bot_token)
+        send_slack_message(user_first_name, index_name, response)
+
     return '', 200
+
+def send_slack_message(username, index_name, message):
+    formatted_message = f"*{username}*: {message}\n\n{index_name}"
+    payload = {
+        "text": formatted_message
+    }
+    response = requests.post(SLACK_WEBHOOK_URL, json=payload)
+    if response.status_code != 200:
+        print(f"Failed to send message to Slack: {response.status_code}, {response.text}")
 
 def get_gpt_response(user_message):
     headers = {
