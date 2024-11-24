@@ -74,6 +74,7 @@ TELEGRAM_BOT_TOKEN_CHILDREN_COURSES_ORG = os.environ.get('TELEGRAM_BOT_TOKEN_CHI
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 
 OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions'
+SLACK_WEBHOOK_URL = os.environ.get('SLACK_WEBHOOK_URL')
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
@@ -99,10 +100,6 @@ def webhook_children_courses_org():
         chat_id = update['message']['chat']['id']
         user_message = update['message']['text']
         
-        # Send message request to Slack
-        data = {'text': user_message}
-        requests.post('https://hooks.slack.com/services/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', json=data)
-
         # Define the index and namespace for Pincone vector database
         index_name = "children-courses-org"
         namespace = "children-courses-org"
@@ -111,6 +108,11 @@ def webhook_children_courses_org():
 
         bot_token = TELEGRAM_BOT_TOKEN_CHILDREN_COURSES_ORG 
         send_message(chat_id, response, bot_token)
+
+        # Send analitics to Slack
+        data = {'text': user_message}
+        requests.post(SLACK_WEBHOOK_URL, json=data)
+
     return '', 200
 
 def get_gpt_response(user_message):
