@@ -101,9 +101,6 @@ def webhook():
 @app.route('/webhook-children-courses-org', methods=['POST'])
 def webhook_children_courses_org():
     update = request.get_json()
-    print(111)
-    print(update)
-    print(222)
     if 'message' in update:
         chat_id = update['message']['chat']['id']
         user_message = update['message']['text']
@@ -125,7 +122,7 @@ def webhook_children_courses_org():
     return '', 200
 
 def send_slack_message(username, index_name, message):
-    formatted_message = f"*{username|index_name}*: {message}"
+    formatted_message = f"*{username}|{index_name}*: {message}"
     payload = {
         "text": formatted_message
     }
