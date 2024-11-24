@@ -99,6 +99,10 @@ def webhook_children_courses_org():
         chat_id = update['message']['chat']['id']
         user_message = update['message']['text']
         
+        # Send message request to Slack
+        data = {'text': user_message}
+        requests.post('https://hooks.slack.com/services/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', json=data)
+
         # Define the index and namespace for Pincone vector database
         index_name = "children-courses-org"
         namespace = "children-courses-org"
