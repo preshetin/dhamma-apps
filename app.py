@@ -94,7 +94,7 @@ def webhook():
         
         bot_token = TELEGRAM_BOT_TOKEN 
         send_message(chat_id, response, bot_token)
-        send_slack_message(user_first_name, index_name, response)
+        send_slack_message(user_first_name, index_name, user_message)
     
     return '', 200
 
@@ -117,12 +117,12 @@ def webhook_children_courses_org():
 
         bot_token = TELEGRAM_BOT_TOKEN_CHILDREN_COURSES_ORG 
         send_message(chat_id, response, bot_token)
-        send_slack_message(user_first_name, index_name, response)
+        send_slack_message(user_first_name, index_name, user_message)
 
     return '', 200
 
 def send_slack_message(username, index_name, message):
-    formatted_message = f"*{username}*: {message}\n\n{index_name}"
+    formatted_message = f"*{username|index_name}*: {message}"
     payload = {
         "text": formatted_message
     }
