@@ -147,7 +147,7 @@
 
 3) [Правила поведения (подписывает ребенок).docx](https://docs.google.com/document/d/1JvK4wFiM74TaG1vjvGN8ZD9whwdtoJrB/edit?usp=drive_link)
 
-4) [Письмо домой.docx](https://docs.google.com/document/d/1uYA1WbxJIPjb3bYbLf7FCtS8Nds_pqWG/edit?usp=drive_link) по количеству участников
+4) [Письмо домой.docx](https://drive.google.com/drive/u/0/folders/1VzZAEcZsnBMfOgJMghKWx6plQwvEtSwT) по количеству участников
 
 5) [Согласие на фото.docx](https://docs.google.com/document/d/1M_DUhErd3ovRdSOD7Vp9b_QxVDJh0WUS/edit?usp=drive_link)  Читает и подписывает родитель, который приводит ребенка. Фото используются для внутренней отчетности и сайта старых студентов.    
 6) Лист с расходами на курс. Суть плаката – отражение расходов на ДК, приглашение к служению на ДК в регионе/городе и о необходимости/пользе ДК.  
