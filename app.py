@@ -17,7 +17,7 @@ register_webhooks(app)
 
 @app.route('/')
 def hello_fly():
-    return 'hello world'
+    return 'hello dhamma app'
 
 
 # Is My Car Okay Bot
