@@ -1,4 +1,4 @@
-# API endpoint for Vipassana courses schedule.
+# Dhamma Apps
 
 This scrapase Vipassana courses schedule and returns a JSON list of courses.
 
