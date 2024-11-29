@@ -1,3 +1,6 @@
+from langchain_core.messages import HumanMessage
+import requests
+from langchain_core.tools import tool
 import os
 import sys
 from dotenv import load_dotenv
@@ -11,9 +14,6 @@ from pinecone import Pinecone
 
 load_dotenv()
 
-from langchain_core.tools import tool
-
-import requests
 
 @tool
 def get_courses_schedule_from_api():
@@ -68,7 +68,7 @@ def get_answer_from_document(message: str) -> str:
         llm, retrieval_qa_chat_prompt
     )
     retrieval_chain = create_retrieval_chain(retriever, combine_docs_chain)
-    
+
     answer_with_knowledge = retrieval_chain.invoke({"input": message})
 
     return answer_with_knowledge['answer']
@@ -86,7 +86,6 @@ tools_mapping = {
 
 llm = ChatOpenAI(model="gpt-4o-mini")
 
-from langchain_core.messages import HumanMessage
 
 # Usage:
 # python chat-playground.py "скинь ссылку на письмо домой"
