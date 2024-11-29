@@ -2,7 +2,7 @@
 
 A the moment, it has the following apps:
 - API endpoint for courses schedule. See demo at https://seahorse-app-db78s.ondigitalocean.app/api/courses
-- Telegram bots webhook endopoints. See demo at https://t.me/ChildrenCoursesOrgBot
+- Telegram bots webhook endpoints. See demo at https://t.me/ChildrenCoursesOrgBot
 
 
 ## How it gets courses schedule?
