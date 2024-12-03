@@ -91,47 +91,49 @@ def get_answer_from_document(message: str) -> str:
 # print(res)
 
 
-tools = [get_answer_from_document, get_courses_schedule_from_api]
+def run_agent():
+    tools = [get_answer_from_document, get_courses_schedule_from_api]
 
-tools_mapping = {
-    "get_answer_from_document": get_answer_from_document,
-    "get_courses_schedule_from_api": get_courses_schedule_from_api
-}
+    tools_mapping = {
+        "get_answer_from_document": get_answer_from_document,
+        "get_courses_schedule_from_api": get_courses_schedule_from_api
+    }
 
-llm = ChatOpenAI(model="gpt-4o-mini")
+    llm = ChatOpenAI(model="gpt-4o-mini")
+
+    # Usage:
+    # python chat-playground.py "скинь ссылку на письмо домой"
+    # python chat-playground.py "какое расписание на детском курсе"
+    # python chat-playground.py "пришли расписание курсов"
+    query = sys.argv[1]
+
+    print('query', query)
+    print('\n\n\n')
+
+    messages = [HumanMessage(query)]
+
+    llm_with_tools = llm.bind_tools(tools, tool_choice='required')
+
+    ai_msg = llm_with_tools.invoke(messages)
+
+    messages.append(ai_msg)
+
+    print('tool calls', ai_msg.tool_calls)
+    print('\n\n\n')
+
+    for tool_call in ai_msg.tool_calls:
+        selected_tool = tools_mapping.get(tool_call["name"].lower())
+        tool_msg = selected_tool.invoke(tool_call)
+        messages.append(tool_msg)
+
+    res = llm.invoke(messages)
+    return res
 
 
-# Usage:
-# python chat-playground.py "скинь ссылку на письмо домой"
-# python chat-playground.py "какое расписание на детском курсе"
-# python chat-playground.py "пришли расписание курсов"
-query = sys.argv[1]
+result = run_agent()
 
-print('query', query)
+print('res variable', result)
+
 print('\n\n\n')
-
-messages = [HumanMessage(query)]
-
-llm_with_tools = llm.bind_tools(tools, tool_choice='required')
-
-ai_msg = llm_with_tools.invoke(messages)
-
-messages.append(ai_msg)
-
-
-print('tool calls', ai_msg.tool_calls)
-print('\n\n\n')
-
-for tool_call in ai_msg.tool_calls:
-    selected_tool = tools_mapping.get(tool_call["name"].lower())
-    tool_msg = selected_tool.invoke(tool_call)
-    messages.append(tool_msg)
-
-
-res = llm.invoke(messages)
-
-print('res variable', res)
-
-print('\n\n\n')
-print('final answer', res.content)
+print('final answer', result.content)
 print('\n\n\n')
