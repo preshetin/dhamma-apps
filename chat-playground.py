@@ -91,7 +91,7 @@ def get_answer_from_document(message: str) -> str:
 # print(res)
 
 
-def run_agent():
+def run_agent(query):
     tools = [get_answer_from_document, get_courses_schedule_from_api]
 
     tools_mapping = {
@@ -100,12 +100,6 @@ def run_agent():
     }
 
     llm = ChatOpenAI(model="gpt-4o-mini")
-
-    # Usage:
-    # python chat-playground.py "скинь ссылку на письмо домой"
-    # python chat-playground.py "какое расписание на детском курсе"
-    # python chat-playground.py "пришли расписание курсов"
-    query = sys.argv[1]
 
     print('query', query)
     print('\n\n\n')
@@ -130,7 +124,13 @@ def run_agent():
     return res
 
 
-result = run_agent()
+# Usage:
+# python chat-playground.py "скинь ссылку на письмо домой"
+# python chat-playground.py "какое расписание на детском курсе"
+# python chat-playground.py "пришли расписание курсов"
+query = sys.argv[1]
+
+result = run_agent(query)
 
 print('res variable', result)
 
