@@ -15,6 +15,7 @@ def get_schedule():
     response = requests.get(url)
 
     location = request.args.get('location', default='all')
+    status = request.args.get('status', default='open')
     year = request.args.get('year', default='current')
     course_type = request.args.get('course_type', default='ten-day')
 
@@ -113,6 +114,10 @@ def get_schedule():
 
     if course_type == 'children':
         result = list(filter(lambda d: d['block'] == 'children', courses))
+        return jsonify(result)
+
+    if status == 'open':
+        result = list(filter(lambda d: d['application_url'] != None, courses))
         return jsonify(result)
 
     return jsonify(result)
