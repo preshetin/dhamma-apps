@@ -17,8 +17,16 @@ load_dotenv()
 
 @tool
 def get_courses_schedule_from_api():
-    """Get vipassana courses schedule. Если спрашивают, какое расписание на курсе, то этот инструмент не должен вызываться. This tool schould be called when courses schedule is requested. This tool should not be called if a user requests course (singular) schedule."""
-    url = "https://seahorse-app-db78s.ondigitalocean.app/api/courses"
+    """
+        Get vipassana courses schedule.
+
+        Если спрашивают, какое расписание на курсе, то этот инструмент не должен вызываться.
+
+        This tool schould be called when courses schedule is requested.
+
+        This tool should not be called if a user requests course (singular) schedule.
+    """
+    url = "https://seahorse-app-db78s.ondigitalocean.app/api/schedule?status=open"
     try:
         response = requests.get(url)
         response.raise_for_status()  # Raise an error for bad responses (4xx or 5xx)
@@ -30,7 +38,13 @@ def get_courses_schedule_from_api():
 
 @tool
 def get_answer_from_document(message: str) -> str:
-    """Gets answer from meditation children course document. The tool should receive the whole user message in 'message' parameter. This tool should not be called if a user requests courses (plural) schedule. """
+    """
+        Gets answer from meditation children course document.
+
+        The tool should receive the whole user message in 'message' parameter.
+
+        This tool should not be called if a user requests courses (plural) schedule.
+    """
     # Initialize Pinecone
     pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
 
