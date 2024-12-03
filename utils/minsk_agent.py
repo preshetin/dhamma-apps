@@ -94,6 +94,7 @@ def get_answer_from_document(message: str) -> str:
 
 
 def run_agent(query):
+    return 'hey man'
     tools = [get_answer_from_document, get_courses_schedule_from_api]
 
     tools_mapping = {

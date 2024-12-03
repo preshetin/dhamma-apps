@@ -24,7 +24,7 @@ def webhook():
         index_name = "minsk-knowledge"
         namespace = "minsk"
 
-        response = run_agent(user_message).content
+        response = run_agent(user_message)
 
         # response = get_answer_from_document(
         #     user_message, index_name, namespace)
