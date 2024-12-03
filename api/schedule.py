@@ -5,17 +5,21 @@ from bs4 import BeautifulSoup
 
 schedule_bp = Blueprint('schedule', __name__)
 
+# /api/schedule?course_type=children&year=current
 
-@schedule_bp.route('/api/courses', methods=['GET'])
+
+@schedule_bp.route('/api/schedule', methods=['GET'])
 # TODO: make it /api/schedule
 def get_schedule():
     url = "https://www.dhamma.org/ru/schedules/schdullabha"
     response = requests.get(url)
 
+    location = request.args.get('location', default='all')
+    year = request.args.get('year', default='current')
+    course_type = request.args.get('course_type', default='ten-day')
+
     if response.status_code != 200:
         return jsonify({"error": "Failed to fetch the page"}), 500
-
-    soup = BeautifulSoup(response.content, 'html.parser')
 
     courses_groups = [
         {
@@ -81,29 +85,50 @@ def get_schedule():
         {
             # 9th table,
             "title": "2024 Курсы для подростков и детей",
-            "block": "childen",
+            "block": "children",
             "year": "current",
             "dom_element": "body > div > div > div:nth-child(8) > div:nth-child(6) > table:nth-child(4) > tbody",
         },
         {
             # 10th table, childent next year
             "title": "2025 Курсы для подростков и детей",
-            "block": "childen",
+            "block": "children",
             "year": "next",
             "dom_element": "body > div > div > div:nth-child(8) > div:nth-child(6) > table:nth-child(6) > tbody",
         },
     ]
 
-    # Use the query selector to find the table body
+    content = response.content
+    soup = BeautifulSoup(content, features='html.parser')
+
+    courses = []
+
+    for courses_group in courses_groups:
+        courses_block = build_courses_list_from_table(
+            soup, courses_group)
+        for course in courses_block:
+            courses.append(course)
+
+    result = courses
+
+    if course_type == 'children':
+        result = list(filter(lambda d: d['block'] == 'children', courses))
+        return jsonify(result)
+
+    return jsonify(result)
+
+
+def build_courses_list_from_table(soup, course_group):
+
     table_body = soup.select_one(
-        "body > div > div > div:nth-child(8) > div:nth-child(6) > table:nth-child(4) > tbody")
+        course_group['dom_element'])
 
     if not table_body:
         return jsonify({"error": "Failed to find the courses table"}), 500
 
     courses = []
 
-    # Iterate over all tr elements except the first one (header)
+  # Iterate over all tr elements except the first one (header)
     for tr in table_body.find_all('tr')[1:]:
         tds = tr.find_all('td')
 
@@ -123,8 +148,10 @@ def get_schedule():
             "status": tds[3].get_text(strip=True),
             "location": tds[4].get_text(strip=True),
             "description": tds[5].get_text(strip=True),
+            "block": course_group['block'],
+            "year": course_group['year']
         }
 
         courses.append(course)
 
-    return jsonify(courses)
+    return courses
