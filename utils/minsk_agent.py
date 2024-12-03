@@ -130,12 +130,12 @@ def run_agent(query):
 # python chat-playground.py "скинь ссылку на письмо домой"
 # python chat-playground.py "какое расписание на детском курсе"
 # python chat-playground.py "пришли расписание курсов"
-query = sys.argv[1]
+# query = sys.argv[1]
 
-result = run_agent(query)
+# result = run_agent(query)
 
-print('res variable', result)
+# print('res variable', result)
 
-print('\n\n\n')
-print('final answer', result.content)
-print('\n\n\n')
+# print('\n\n\n')
+# print('final answer', result.content)
+# print('\n\n\n')
