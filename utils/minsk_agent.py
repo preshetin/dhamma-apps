@@ -125,6 +125,7 @@ def run_agent(query, chat_id=None, bot_token=None):
     for tool_call in ai_msg.tool_calls:
         selected_tool = tools_mapping.get(tool_call["name"].lower())
         if chat_id:
+            print('sending tg message with tool name', tool_call['name'])
             send_message(chat_id, f'invoking {tool_call['name']}', bot_token)
         tool_msg = selected_tool.invoke(tool_call)
         messages.append(tool_msg)
