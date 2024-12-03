@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def get_schedule_service(status, course_type, location, year):
+def get_schedule_service(status, course_type='ten-day', location='all', year='current'):
     url = "https://www.dhamma.org/ru/schedules/schdullabha"
     response = requests.get(url)
 

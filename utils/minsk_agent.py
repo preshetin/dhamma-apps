@@ -13,6 +13,9 @@ from langchain import hub
 from pinecone import Pinecone
 
 from utils.schedule_service import get_schedule_service
+from utils.shared_functions import send_message
+# from schedule_service import get_schedule_service
+# from shared_functions import send_message
 
 load_dotenv()
 
@@ -95,7 +98,7 @@ def get_answer_from_document(message: str) -> str:
 # print(res)
 
 
-def run_agent(query):
+def run_agent(query, chat_id=None, bot_token=None):
     tools = [get_answer_from_document, get_courses_schedule_from_api]
 
     tools_mapping = {
@@ -121,23 +124,23 @@ def run_agent(query):
 
     for tool_call in ai_msg.tool_calls:
         selected_tool = tools_mapping.get(tool_call["name"].lower())
+        if chat_id:
+            send_message(chat_id, f'invoking {tool_call['name']}', bot_token)
         tool_msg = selected_tool.invoke(tool_call)
         messages.append(tool_msg)
 
     res = llm.invoke(messages)
-    return res
+    return res.content
 
 
-# Usage:
-# python minsk_agent.py "скинь ссылку на письмо домой"
-# python minsk_agent.py "какое расписание на детском курсе"
-# python minsk_agent.py "пришли расписание курсов"
-# query = sys.argv[1]
+# if __init__ == '__main__':
+# if True:
+#     # Usage:
+#     # python minsk_agent.py "скинь ссылку на письмо домой"
+#     # python minsk_agent.py "какое расписание на детском курсе"
+#     # python minsk_agent.py "пришли расписание курсов"
+#     query = sys.argv[1]
 
-# result = run_agent(query)
+#     result = run_agent(query)
 
-# print('res variable', result)
-
-# print('\n\n\n')
-# print('final answer', result.content)
-# print('\n\n\n')
+#     print('res variable', result)

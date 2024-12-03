@@ -24,12 +24,13 @@ def webhook():
         index_name = "minsk-knowledge"
         namespace = "minsk"
 
-        response = run_agent(user_message)
+        bot_token = TELEGRAM_BOT_TOKEN
+
+        response = run_agent(user_message, chat_id, bot_token)
 
         # response = get_answer_from_document(
         #     user_message, index_name, namespace)
 
-        bot_token = TELEGRAM_BOT_TOKEN
         send_message(chat_id, response, bot_token)
         send_slack_message(user_first_name, index_name, user_message)
 
