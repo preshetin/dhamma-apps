@@ -116,7 +116,8 @@ def build_courses_list_from_table(soup, course_group):
         course_group['dom_element'])
 
     if not table_body:
-        return jsonify({"error": "Failed to find the courses table"}), 500
+        raise "Failed to find the courses table"
+        # return jsonify({"error": "Failed to find the courses table"}), 500
 
     courses = []
 

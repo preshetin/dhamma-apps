@@ -1,3 +1,4 @@
+import json
 from langchain_core.messages import HumanMessage
 import requests
 from langchain_core.tools import tool
@@ -11,6 +12,7 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain import hub
 from pinecone import Pinecone
 
+from utils.schedule_service import get_schedule_service
 
 load_dotenv()
 
@@ -28,9 +30,8 @@ def get_courses_schedule_from_api():
     """
     url = "https://seahorse-app-db78s.ondigitalocean.app/api/schedule?status=open"
     try:
-        response = requests.get(url)
-        response.raise_for_status()  # Raise an error for bad responses (4xx or 5xx)
-        return response.json()  # Return the JSON response
+        result = get_schedule_service(status='open')
+        return json.dumps(result)
     except requests.exceptions.RequestException as e:
         print(f"An error occurred: {e}")
         return None  # Return None in case of an error
@@ -94,7 +95,6 @@ def get_answer_from_document(message: str) -> str:
 
 
 def run_agent(query):
-    return 'hey man'
     tools = [get_answer_from_document, get_courses_schedule_from_api]
 
     tools_mapping = {
@@ -128,9 +128,9 @@ def run_agent(query):
 
 
 # Usage:
-# python chat-playground.py "скинь ссылку на письмо домой"
-# python chat-playground.py "какое расписание на детском курсе"
-# python chat-playground.py "пришли расписание курсов"
+# python minsk_agent.py "скинь ссылку на письмо домой"
+# python minsk_agent.py "какое расписание на детском курсе"
+# python minsk_agent.py "пришли расписание курсов"
 # query = sys.argv[1]
 
 # result = run_agent(query)
