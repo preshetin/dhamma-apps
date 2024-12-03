@@ -17,6 +17,83 @@ def get_schedule():
 
     soup = BeautifulSoup(response.content, 'html.parser')
 
+    courses_groups = [
+        {
+            # first table, dullabha current year
+            "title": "2024 Десятидневные и другие курсы для взрослых",
+            "block": "dullabha",
+            "year": "current",
+            "dom_element": "body > div > div > div:nth-child(8) > div:nth-child(2) > table:nth-child(4) > tbody",
+        },
+        {
+            # second table, dullabha next year
+            "title": "2025 Десятидневные и другие курсы для взрослых",
+            "block": "dullabha",
+            "year": "next",
+            "dom_element": "body > div > div > div:nth-child(8) > div:nth-child(2) > table:nth-child(6) > tbody",
+        },
+        # Separator: Курсы вне центров
+        {
+            # 3-rd table: ten days, childern, one day,
+            # location: russia
+            # current year
+            "title": "2024 Курсы медитации в России",
+            "block": "russia",
+            "year": "current",
+            "dom_element": "body > div > div > div:nth-child(8) > div:nth-child(4) > table:nth-child(4) > tbody",
+        },
+        {
+            # 4-rd table, russia, next year
+            "title": "2025 Курсы медитации в России",
+            "block": "russia",
+            "year": "next",
+            "dom_element": "body > div > div > div:nth-child(8) > div:nth-child(4) > table:nth-child(6) > tbody",
+        },
+        {
+            # 5th table, spb current year
+            "title": "2024 Санкт-Петербург Курсы",
+            "block": "spb",
+            "year": "current",
+            "dom_element": "body > div > div > div:nth-child(8) > div:nth-child(4) > table:nth-child(8) > tbody",
+        },
+        {
+            # 6th table, spb next year
+            "title": "2025 Санкт-Петербург Курсы",
+            "block": "spb",
+            "year": "next",
+            "dom_element": "body > div > div > div:nth-child(8) > div:nth-child(4) > table:nth-child(10) > tbody",
+        },
+        {
+            # 7th table, ekt current year
+            "title": "2024 Екатеринбург Курсы",
+            "block": "ekt",
+            "year": "current",
+            "dom_element": "body > div > div > div:nth-child(8) > div:nth-child(4) > table:nth-child(12) > tbody",
+        },
+        {
+            # 8th table, ekt next year
+            "title": "2025 Екатеринбург Курсы",
+            "block": "ekt",
+            "year": "next",
+            "dom_element": "body > div > div > div:nth-child(8) > div:nth-child(4) > table:nth-child(14) > tbody",
+        },
+        # Separator: Курсы для подростков и детей
+        {
+            # 9th table,
+            "title": "2024 Курсы для подростков и детей",
+            "block": "childen",
+            "year": "current",
+            "dom_element": "body > div > div > div:nth-child(8) > div:nth-child(6) > table:nth-child(4) > tbody",
+        },
+        {
+            # 10th table, childent next year
+            "title": "2025 Курсы для подростков и детей",
+            "block": "childen",
+            "year": "next",
+            "dom_element": "body > div > div > div:nth-child(8) > div:nth-child(6) > table:nth-child(6) > tbody",
+        },
+    ]
+
     # Use the query selector to find the table body
     table_body = soup.select_one(
         "body > div > div > div:nth-child(8) > div:nth-child(6) > table:nth-child(4) > tbody")
