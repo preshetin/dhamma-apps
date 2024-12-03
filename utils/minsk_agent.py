@@ -49,8 +49,10 @@ def get_answer_from_document(message: str) -> str:
     pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
 
     # Define the index and namespace
-    index_name = "children-courses-org"
-    namespace = "children-courses-org"
+    # index_name = "children-courses-org"
+    # namespace = "children-courses-org"
+    index_name = "minsk-knowledge"
+    namespace = "minsk"
 
     # Initialize the embeddings
     model_name = 'multilingual-e5-large'
