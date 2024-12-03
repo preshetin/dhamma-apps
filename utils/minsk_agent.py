@@ -31,6 +31,7 @@ def get_courses_schedule_from_api():
     url = "https://seahorse-app-db78s.ondigitalocean.app/api/schedule?status=open"
     try:
         result = get_schedule_service(status='open')
+        return result
         return json.dumps(result)
     except requests.exceptions.RequestException as e:
         print(f"An error occurred: {e}")
