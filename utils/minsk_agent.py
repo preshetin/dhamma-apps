@@ -135,14 +135,14 @@ def run_agent(query, chat_id=None, bot_token=None):
     return res.content
 
 
-# if __init__ == '__main__':
-# if True:
-#     # Usage:
-#     # python minsk_agent.py "скинь ссылку на письмо домой"
-#     # python minsk_agent.py "какое расписание на детском курсе"
-#     # python minsk_agent.py "пришли расписание курсов"
-#     query = sys.argv[1]
+# Usage:
+# python minsk_agent.py "скинь ссылку на письмо домой"
+# python minsk_agent.py "какое расписание на детском курсе"
+# python minsk_agent.py "пришли расписание курсов"
+if __name__ == '__main__':
 
-#     result = run_agent(query)
+    query = sys.argv[1]
 
-#     print('res variable', result)
+    result = run_agent(query)
+
+    print('final result', result)
