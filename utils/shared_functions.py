@@ -94,6 +94,6 @@ def send_message(chat_id, text, bot_token):
     payload = {
         'chat_id': chat_id,
         'text': text,
-        'parse_mode': 'Markdown'  # Optional: use Markdown formatting
+        'parse_mode': 'MarkdownV2'  # Optional: use Markdown formatting
     }
     requests.post(url, json=payload)
