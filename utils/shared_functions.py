@@ -1,4 +1,5 @@
 import os
+from chatgpt_md_converter import telegram_format
 from langchain_pinecone import PineconeEmbeddings, PineconeVectorStore
 from langchain_openai import ChatOpenAI
 from langchain.chains import create_retrieval_chain
@@ -91,12 +92,12 @@ def send_message(chat_id, text, bot_token):
     """
 
     url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
+
+    formatted_text = telegram_format(text)
+
     payload = {
         'chat_id': chat_id,
-        'text': text,
-        'parse_mode': 'Markdown'  # Optional: use Markdown formatting
+        'text': formatted_text,
+        'parse_mode': 'html' 
     }
-
-    print('payload', payload)
-    print('chat_id', chat_id)
     requests.post(url, json=payload)
