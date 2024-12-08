@@ -9,7 +9,6 @@ schedule_bp = Blueprint('schedule', __name__)
 
 
 @schedule_bp.route('/api/schedule', methods=['GET'])
-# TODO: make it /api/schedule
 def get_schedule():
     location = request.args.get('location', default='all')
     status = request.args.get('status', default='open')
