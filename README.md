@@ -5,6 +5,21 @@ A the moment, it has the following apps:
 - Telegram bots webhook endpoints. See demo at https://t.me/ChildrenCoursesOrgBot
 
 
+## How to add new bot
+
+1. Create knowledge base in a file with .md extension
+2. Create new index (vector database) based on that file. Make sure to edit `load_index.py` and fill in filename.
+```
+python load_index.py
+```
+3. Go to BotFather and create new bot
+4. Set webhook
+```
+curl -X POST "https://api.telegram.org/bot{token}/setWebhook?url=https://xxxx.ondigitalocean.app/webhook-example"
+```
+5. Create / copy webhook endpoint.
+6. Test bot by typing something.
+
 ## How it gets courses schedule?
 
 It parses Vipassana courses schedule and returns a JSON list of courses.
