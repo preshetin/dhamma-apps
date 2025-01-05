@@ -1,12 +1,15 @@
+from dotenv import load_dotenv
 from langchain_text_splitters import MarkdownHeaderTextSplitter
 import sys
 
-#------- Fill this -------
-filename = 'children-courses-org.md'
-# index name in pincone
-index_name = "children-courses-org"
+load_dotenv()
 
-namespace = "children-courses-org"
+#------- Fill this -------
+filename = 'dullabha.md'
+# index name in pincone
+index_name = "dullabha"
+
+namespace = "dullabha"
 # ------------------------
 
 with open(filename, 'r', encoding='utf-8') as file:
@@ -108,25 +111,25 @@ for ids in index.list(namespace=namespace):
 
 
 
-from langchain_openai import ChatOpenAI
-from langchain.chains import create_retrieval_chain
-from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain import hub
+# from langchain_openai import ChatOpenAI
+# from langchain.chains import create_retrieval_chain
+# from langchain.chains.combine_documents import create_stuff_documents_chain
+# from langchain import hub
 
 
-retrieval_qa_chat_prompt = hub.pull("langchain-ai/retrieval-qa-chat")
-retriever=docsearch.as_retriever()
+# retrieval_qa_chat_prompt = hub.pull("langchain-ai/retrieval-qa-chat")
+# retriever=docsearch.as_retriever()
 
-llm = ChatOpenAI(
-    openai_api_key=os.environ.get('OPENAI_API_KEY'),
-    model_name='gpt-4o-mini',
-    temperature=0.0
-)
+# llm = ChatOpenAI(
+#     openai_api_key=os.environ.get('OPENAI_API_KEY'),
+#     model_name='gpt-4o-mini',
+#     temperature=0.0
+# )
 
-combine_docs_chain = create_stuff_documents_chain(
-    llm, retrieval_qa_chat_prompt
-)
-retrieval_chain = create_retrieval_chain(retriever, combine_docs_chain)
+# combine_docs_chain = create_stuff_documents_chain(
+#     llm, retrieval_qa_chat_prompt
+# )
+# retrieval_chain = create_retrieval_chain(retriever, combine_docs_chain)
 
 
 
