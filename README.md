@@ -1,7 +1,7 @@
 # Dhamma Apps
 
 A the moment, it has the following apps:
-- API endpoint for courses schedule. See demo at https://seahorse-app-db78s.ondigitalocean.app/api/courses
+- API endpoint for courses schedule. See demo at https://seahorse-app-db78s.ondigitalocean.app/api/schedule
 - Telegram bots webhook endpoints. See demo at https://t.me/ChildrenCoursesOrgBot
 
 
