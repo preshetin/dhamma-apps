@@ -55,20 +55,20 @@ def get_schedule_service(status, course_type='ten-day', location='all', year='cu
             "year": "next",
             "dom_element": "body > div > div > div:nth-child(8) > div:nth-child(4) > table:nth-child(10) > tbody",
         },
-        {
-            # 7th table, ekt current year
-            "title": "2024 Екатеринбург Курсы",
-            "block": "ekt",
-            "year": "current",
-            "dom_element": "body > div > div > div:nth-child(8) > div:nth-child(4) > table:nth-child(12) > tbody",
-        },
-        {
-            # 8th table, ekt next year
-            "title": "2025 Екатеринбург Курсы",
-            "block": "ekt",
-            "year": "next",
-            "dom_element": "body > div > div > div:nth-child(8) > div:nth-child(4) > table:nth-child(14) > tbody",
-        },
+        # {
+        #     # 7th table, ekt current year
+        #     "title": "2024 Екатеринбург Курсы",
+        #     "block": "ekt",
+        #     "year": "current",
+        #     "dom_element": "body > div > div > div:nth-child(8) > div:nth-child(4) > table:nth-child(12) > tbody",
+        # },
+        # {
+        #     # 8th table, ekt next year
+        #     "title": "2025 Екатеринбург Курсы",
+        #     "block": "ekt",
+        #     "year": "next",
+        #     "dom_element": "body > div > div > div:nth-child(8) > div:nth-child(4) > table:nth-child(14) > tbody",
+        # },
         # Separator: Курсы для подростков и детей
         {
             # 9th table,
@@ -77,13 +77,13 @@ def get_schedule_service(status, course_type='ten-day', location='all', year='cu
             "year": "current",
             "dom_element": "body > div > div > div:nth-child(8) > div:nth-child(6) > table:nth-child(4) > tbody",
         },
-        {
-            # 10th table, childent next year
-            "title": "2025 Курсы для подростков и детей",
-            "block": "children",
-            "year": "next",
-            "dom_element": "body > div > div > div:nth-child(8) > div:nth-child(6) > table:nth-child(6) > tbody",
-        },
+        # {
+        #     # 10th table, childent next year
+        #     "title": "2025 Курсы для подростков и детей",
+        #     "block": "children",
+        #     "year": "next",
+        #     "dom_element": "body > div > div > div:nth-child(8) > div:nth-child(6) > table:nth-child(6) > tbody",
+        # },
     ]
 
     content = response.content
