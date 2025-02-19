@@ -21,7 +21,7 @@ def webhook_petyavpn():
         user_last_name = user_info.get('last_name', '')
         user_username = user_info.get('username', '')
 
-        url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
+        url = f'https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN_PETYAVPN}/sendMessage'
 
         # formatted_text = telegram_format(text)
         formatted_text = user_message
