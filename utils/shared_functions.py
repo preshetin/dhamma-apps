@@ -2,6 +2,7 @@ import os
 from chatgpt_md_converter import telegram_format
 from langchain_pinecone import PineconeEmbeddings, PineconeVectorStore
 from langchain_openai import ChatOpenAI
+from langchain.prompts import ChatPromptTemplate
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain import hub
@@ -38,7 +39,21 @@ def get_answer_from_document(message, index_name, namespace):
     )
 
     # Create the retrieval chain
-    retrieval_qa_chat_prompt = hub.pull("langchain-ai/retrieval-qa-chat")
+    custom_prompt = """You are a helpful assistant that answers questions based on provided context.
+
+    Try to include links to files or documents if the context contains them.
+    
+    <context>
+    {context}
+    </context>
+    
+    Answer the question based on the context. If you cannot find the answer in the context, say "Я не могу ответить в рамках моих знаний." Do not make up information."""
+
+    retrieval_qa_chat_prompt = ChatPromptTemplate.from_messages([
+        ("system", custom_prompt),
+        ("user", "{input}"),
+    ])
+    
     combine_docs_chain = create_stuff_documents_chain(
         llm, retrieval_qa_chat_prompt
     )
