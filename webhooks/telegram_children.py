@@ -45,6 +45,8 @@ def webhook_children_courses_org():
     elif 'callback_query' in update:
         chat_id = update['callback_query']['message']['chat']['id']
         callback_data = update['callback_query']['data']
+        user_info = update['callback_query']['from']
+        user_username = user_info.get('username', '')
         
         # Send acknowledgment message
         send_message(chat_id, f"Обрабатываю вопрос: {callback_data}...", bot_token)
@@ -57,5 +59,8 @@ def webhook_children_courses_org():
             callback_data, index_name, namespace)
 
         send_message(chat_id, response, bot_token)
+
+        if user_username != 'preshetin':
+            send_slack_message(user_username, index_name, user_message)
         
     return '', 200
