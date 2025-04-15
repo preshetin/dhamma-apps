@@ -8,11 +8,11 @@ telegram_children_bp = Blueprint('telegram_children', __name__)
 
 TELEGRAM_BOT_TOKEN_CHILDREN_COURSES_ORG = os.environ.get(
     'TELEGRAM_BOT_TOKEN_CHILDREN_COURSES_ORG')
-bot_token = TELEGRAM_BOT_TOKEN_CHILDREN_COURSES_ORG
 
 
 @telegram_children_bp.route('/webhook-children-courses-org', methods=['POST'])
 def webhook_children_courses_org():
+    bot_token = TELEGRAM_BOT_TOKEN_CHILDREN_COURSES_ORG
     update = request.get_json()
     if 'message' in update and 'text' in update['message']:
         chat_id = update['message']['chat']['id']
