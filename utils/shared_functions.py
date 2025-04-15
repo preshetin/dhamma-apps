@@ -116,3 +116,38 @@ def send_message(chat_id, text, bot_token):
         'parse_mode': 'html' 
     }
     requests.post(url, json=payload)
+
+
+def send_welcome_message(chat_id, bot_token):
+    """Send welcome message with example buttons
+    
+    Args:
+        chat_id (int): Chat ID from Telegram webhook payload
+        bot_token (str): Telegram bot token
+    """
+    url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
+    
+    # Define example messages that will appear as buttons
+    example_messages = [
+        "Как организовать детский курс?",
+        "Какие есть роли у служащих?",
+        "В какие игры играть с детьми?",
+        "Материалы для печати"
+    ]
+    
+    # Create inline keyboard markup with buttons
+    keyboard = {
+        'inline_keyboard': [
+            [{'text': msg, 'callback_data': msg}] for msg in example_messages
+        ]
+    }
+    
+    welcome_text = "👋 Добро пожаловать!\n\n Я помогу вам узнать больше, как проводить детские курсы Анапаны, как их преподает С.Н. Гоенка-джи.\n\nВот примеры вопросов, которые вы можете задать ⬇️"
+    
+    payload = {
+        'chat_id': chat_id,
+        'text': welcome_text,
+        'reply_markup': keyboard
+    }
+    
+    requests.post(url, json=payload)
