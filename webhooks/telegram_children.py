@@ -60,7 +60,7 @@ def webhook_children_courses_org():
 
         send_message(chat_id, response, bot_token)
 
-        if user_username != 'preshetin':
-            send_slack_message(user_username, index_name, user_message)
+        # if user_username != 'preshetin':
+            # send_slack_message(user_username, index_name, user_message)
         
     return '', 200
