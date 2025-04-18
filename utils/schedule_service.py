@@ -17,15 +17,13 @@ def get_schedule_service(status, course_type='ten-day', location='all', year='cu
             "year": "current",
             "dom_element": "body > div > div > div:nth-child(8) > div:nth-child(2) > table:nth-child(4) > tbody",
         },
-        """
-        {
+        #{
             # second table, dullabha next year
-            "title": "2025 Десятидневные и другие курсы для взрослых",
-            "block": "dullabha",
-            "year": "next",
-            "dom_element": "body > div > div > div:nth-child(8) > div:nth-child(2) > table:nth-child(6) > tbody",
-        },
-        """
+           # "title": "2025 Десятидневные и другие курсы для взрослых",
+          #  "block": "dullabha",
+           # "year": "next",
+          #  "dom_element": "body > div > div > div:nth-child(8) > div:nth-child(2) > table:nth-child(6) > tbody",
+      #  },
         # Separator: Курсы вне центров
         {
             # 3-rd table: ten days, childern, one day,
