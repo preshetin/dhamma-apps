@@ -133,7 +133,7 @@ def run_agent(query, chat_id=None, bot_token=None):
         if tool_call['name'] == 'get_courses_schedule_from_api':
             if chat_id:
                 send_message(
-                    chat_id, 'Смотрю расписание курсов на странице российской Випассаны...', bot_token)
+                    chat_id, 'Смотрю [расписание курсов](https://www.dhamma.org/ru/schedules/schdullabha) на странице российской Випассаны...', bot_token)
 
         tool_msg = selected_tool.invoke(tool_call)
         messages.append(tool_msg)
