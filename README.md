@@ -3,6 +3,7 @@
 A the moment, it has the following apps:
 - API endpoint for courses schedule. See demo at https://seahorse-app-db78s.ondigitalocean.app/api/schedule
 - Telegram bots webhook endpoints. See demo at https://t.me/ChildrenCoursesOrgBot
+- Another telegram bot uses this codebase: https://t.me/MinskOrgBot
 
 
 ## How to add new bot
