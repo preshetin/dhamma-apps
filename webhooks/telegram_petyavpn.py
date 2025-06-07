@@ -8,7 +8,7 @@ import json
 telegram_petyavpn_bp = Blueprint('telegram_petyavpn', __name__)
 
 TELEGRAM_BOT_TOKEN_PETYAVPN = os.environ.get('TELEGRAM_BOT_TOKEN_PETYAVPN')
-API_URL = f'https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN_PETYAVPN}/test'
+API_URL = f'https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN_PETYAVPN}'
 
 @telegram_petyavpn_bp.route('/webhook-petyavpn', methods=['POST'])
 def webhook_petyavpn():
