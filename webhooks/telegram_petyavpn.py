@@ -2,6 +2,9 @@ import requests
 import os
 from flask import Blueprint, request
 
+from utils.shared_functions import send_slack_message
+import json
+
 telegram_petyavpn_bp = Blueprint('telegram_petyavpn', __name__)
 
 TELEGRAM_BOT_TOKEN_PETYAVPN = os.environ.get('TELEGRAM_BOT_TOKEN_PETYAVPN')
@@ -10,6 +13,7 @@ API_URL = f'https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN_PETYAVPN}/test'
 @telegram_petyavpn_bp.route('/webhook-petyavpn', methods=['POST'])
 def webhook_petyavpn():
     update = request.get_json()
+    send_slack_message('some_user', 'foo', json.dumps(update))
     
     # Handle pre_checkout_query
     if 'pre_checkout_query' in update:
