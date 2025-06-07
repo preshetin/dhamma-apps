@@ -9,6 +9,7 @@ telegram_petyavpn_bp = Blueprint('telegram_petyavpn', __name__)
 TELEGRAM_BOT_TOKEN_PETYAVPN = os.environ.get(
     'TELEGRAM_BOT_TOKEN_PETYAVPN')
 
+API_URL= f'https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN_PETYAVPN}'
 
 @telegram_petyavpn_bp.route('/webhook-petyavpn', methods=['POST'])
 def webhook_petyavpn():
@@ -21,14 +22,14 @@ def webhook_petyavpn():
         user_last_name = user_info.get('last_name', '')
         user_username = user_info.get('username', '')
 
-        url = f'https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN_PETYAVPN}/sendMessage'
+        url = f'{API_URL}/sendMessage'
 
         # formatted_text = telegram_format(text)
         formatted_text = user_message
 
         payload = {
             'chat_id': chat_id,
-            'text': formatted_text,
+            'text': f"You said:{formatted_text}",
             'parse_mode': 'html'
         }
         requests.post(url, json=payload)
