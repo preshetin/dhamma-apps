@@ -47,7 +47,7 @@ def webhook_petyavpn():
         # Handle regular message
         user_message = update['message']['text']
         
-        if user_message.lower() == 'pay':
+        if user_message.lower() == 'оплата':
             # Send invoice
             url = f'{API_URL}/sendInvoice'
             payload = {
@@ -70,7 +70,7 @@ def webhook_petyavpn():
             formatted_text = user_message
             payload = {
                 'chat_id': chat_id,
-                'text': f"You said:{formatted_text}",
+                'text': f"Я пока только уменю принимать оплату. \n\nЕсли есть вопрос, напиши Пете @preshetin",
                 'parse_mode': 'html'
             }
             requests.post(url, json=payload)
