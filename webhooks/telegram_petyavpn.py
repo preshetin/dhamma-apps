@@ -21,15 +21,15 @@ def webhook_petyavpn():
         chat_id = callback_query['message']['chat']['id']
 
         if callback_query['data'] == 'confirm_stars_purchase':
-            # Send invoice
+            amount = 2
             url = f'{API_URL}/sendInvoice'
             payload = {
                 'chat_id': chat_id,
-                'title': 'VPN for June, 2025',
-                'description': 'Purchase 100 Telegram Stars',
+                'title': 'Один месяц VPN',
+                'description': 'Использование VPN в течение одного месяца',
                 'payload': 'stars_payment',
                 'currency': 'XTR',
-                'prices': [{'label': '100 Stars', 'amount': 100}],
+                'prices': [{'label': f"{amount} Stars", 'amount': amount}],
                 'need_name': False,
                 'need_phone_number': False,
                 'need_email': False,
@@ -86,38 +86,20 @@ def webhook_petyavpn():
         # Handle regular message
         user_message = update['message']['text']
         
-        if user_message.lower() == 'оплата':
-            # Send invoice
-            url = f'{API_URL}/sendInvoice'
-            payload = {
-                'chat_id': chat_id,
-                'title': 'Один месяц VPN',
-                'description': 'Использование VPN в течение одного месяца',
-                'payload': 'stars_payment',
-                # 'provider_token': os.environ.get('TELEGRAM_PAYMENT_TOKEN'),  # You need to set this in environment variables
-                'currency': 'XTR',
-                'prices': [{'label': '2ввв Stars', 'amount': 2}],  # Amount in cents (1 USD)
-                'need_name': False,
-                'need_phone_number': False,
-                'need_email': False,
-                'need_shipping_address': False,
+        # Regular message handling
+        url = f'{API_URL}/sendMessage'
+        formatted_text = user_message
+        payload = {
+            'chat_id': chat_id,
+            'text': f"Я пока только уменю принимать оплату. \n\nЕсли есть вопрос, напиши Пете @preshetin",
+            'parse_mode': 'html',
+            'reply_markup': {
+                'inline_keyboard': [[{
+                    'text': 'Оплатить',
+                    'callback_data': 'pay_button_clicked'
+                }]]
             }
-            requests.post(url, json=payload)
-        else:
-            # Regular message handling
-            url = f'{API_URL}/sendMessage'
-            formatted_text = user_message
-            payload = {
-                'chat_id': chat_id,
-                'text': f"Я пока только уменю принимать оплату. \n\nЕсли есть вопрос, напиши Пете @preshetin",
-                'parse_mode': 'html',
-                'reply_markup': {
-                    'inline_keyboard': [[{
-                        'text': 'Оплатить',
-                        'callback_data': 'pay_button_clicked'
-                    }]]
-                }
-            }
-            requests.post(url, json=payload)
+        }
+        requests.post(url, json=payload)
 
     return '', 200
