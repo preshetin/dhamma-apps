@@ -15,6 +15,45 @@ def webhook_petyavpn():
     update = request.get_json()
     send_slack_message('some_user', 'foo', json.dumps(update))
     
+    # Handle callback query
+    if 'callback_query' in update:
+        callback_query = update['callback_query']
+        chat_id = callback_query['message']['chat']['id']
+
+        if callback_query['data'] == 'confirm_stars_purchase':
+            # Send invoice
+            url = f'{API_URL}/sendInvoice'
+            payload = {
+                'chat_id': chat_id,
+                'title': 'VPN for June, 2025',
+                'description': 'Purchase 100 Telegram Stars',
+                'payload': 'stars_payment',
+                'currency': 'XTR',
+                'prices': [{'label': '100 Stars', 'amount': 100}],
+                'need_name': False,
+                'need_phone_number': False,
+                'need_email': False,
+                'need_shipping_address': False,
+            }
+            requests.post(url, json=payload)
+        
+        if callback_query['data'] == 'pay_button_clicked':
+            url = f'{API_URL}/sendMessage'
+            payload = {
+                'chat_id': chat_id,
+                'text': "Оплата VPN производится через покупку звезды телеграм. 🌟\n\n Чтобы купить звезды, перейдите в @PremiumBot. \n\n Месяц использования VPN составляет <b>100 звезд</b> ((~170₽, точная сумма зависит от курса рубля и комиссии Telegram))  \n\nКак пополните баланс, возвращайтесь сюда",
+                'parse_mode': 'html',
+                'reply_markup': {
+                    'inline_keyboard': [[{
+                        'text': 'Я купил(a) звезды',
+                        'callback_data': 'confirm_stars_purchase'
+                    }]]
+                }
+            }
+            requests.post(url, json=payload)
+            
+            return '', 200
+
     # Handle pre_checkout_query
     if 'pre_checkout_query' in update:
         pre_checkout_query_id = update['pre_checkout_query']['id']
@@ -71,7 +110,13 @@ def webhook_petyavpn():
             payload = {
                 'chat_id': chat_id,
                 'text': f"Я пока только уменю принимать оплату. \n\nЕсли есть вопрос, напиши Пете @preshetin",
-                'parse_mode': 'html'
+                'parse_mode': 'html',
+                'reply_markup': {
+                    'inline_keyboard': [[{
+                        'text': 'Оплатить',
+                        'callback_data': 'pay_button_clicked'
+                    }]]
+                }
             }
             requests.post(url, json=payload)
 
