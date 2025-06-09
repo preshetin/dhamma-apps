@@ -91,12 +91,12 @@ def webhook_petyavpn():
             url = f'{API_URL}/sendInvoice'
             payload = {
                 'chat_id': chat_id,
-                'title': 'VPN for June, 2025',
-                'description': 'Purchase 100 Telegram Stars',
+                'title': 'Один месяц VPN',
+                'description': 'Использование VPN в течение одного месяца',
                 'payload': 'stars_payment',
                 # 'provider_token': os.environ.get('TELEGRAM_PAYMENT_TOKEN'),  # You need to set this in environment variables
                 'currency': 'XTR',
-                'prices': [{'label': '100 Stars', 'amount': 100}],  # Amount in cents (1 USD)
+                'prices': [{'label': '2ввв Stars', 'amount': 2}],  # Amount in cents (1 USD)
                 'need_name': False,
                 'need_phone_number': False,
                 'need_email': False,
