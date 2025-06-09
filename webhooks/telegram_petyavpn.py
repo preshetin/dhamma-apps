@@ -39,6 +39,8 @@ def send_invoice(chat_id, amount):
 def webhook_petyavpn():
     update = request.get_json()
     send_slack_message('some_user', 'foo', json.dumps(update))
+
+    return '', 200
     
     # Handle callback query
     if 'callback_query' in update:
@@ -46,7 +48,7 @@ def webhook_petyavpn():
         chat_id = callback_query['message']['chat']['id']
 
         if callback_query['data'] == 'confirm_stars_purchase':
-            amount = 2
+            amount = 100
             send_invoice(chat_id, amount)
         
         if callback_query['data'] == 'pay_button_clicked':
@@ -93,7 +95,7 @@ def webhook_petyavpn():
         user_message = update['message']['text']
 
         if user_message.lower() == 'оплата':
-            send_invoice(chat_id, 2)
+            send_invoice(chat_id, 100)
             send_message(chat_id, "Если у вас не получается оплатить (в РФ не работает ApplePay), попробуйте купить звезды через @PremiumBot и вернитесь сюда и нажмите кнопку оплаты.", parse_mode='html')
         else:
             # Regular message handling
