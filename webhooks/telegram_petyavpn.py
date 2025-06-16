@@ -50,6 +50,7 @@ def webhook_petyavpn():
         if callback_query['data'] == 'confirm_stars_purchase':
             amount = 100
             send_invoice(chat_id, amount)
+            # TODO: db: add message from 'user' with text "confirm_stars_purchase"
         
         if callback_query['data'] == 'pay_button_clicked':
             url = f'{API_URL}/sendMessage'
@@ -65,8 +66,14 @@ def webhook_petyavpn():
                 }
             }
             requests.post(url, json=payload)
+            # TODO: db: add message from 'bot' with text payload.text
             
             return '', 200
+
+        if callback_query['data'] == 'free_connection':
+            send_message(chat_id, "Вот инструкция и ваш ключ (В разработке. Пока пишите Пете @preshetin)", parse_mode='html')
+            # TODO: panel_api: create new client in 3x-ui panel, set end_at to 7 days from now
+            # TODO: db: add new message from 'bot' with text "free_connection instruction and key" 
 
     # Handle pre_checkout_query
     if 'pre_checkout_query' in update:
@@ -89,10 +96,31 @@ def webhook_petyavpn():
         # Handle successful payment
         if 'successful_payment' in update['message']:
             send_message(chat_id, f"Спасибо за оплату, {user_first_name} {user_last_name} (@{user_username})! \n\nVPN активирован на месяц. \n\nЕсли есть вопросы, напиши Пете @preshetin")
+            # TODO: db: add one month to subscription end_at date
+            # TODO: db: add message from 'user' with text "successful_payment"
+            # TODO: db add new payment with amount 100 stars and chat_id
+            # TODO: panel_api: activate client in 3x-ui panel, set end_at to 30 days from now
             return '', 200
            
         # Handle regular message
         user_message = update['message']['text']
+
+        if user_message == '/start':
+            url = f'{API_URL}/sendMessage'
+            payload = {
+                'chat_id': chat_id,
+                'text': "Привет! 👋",
+                'parse_mode': 'html',
+                'reply_markup': {
+                    'inline_keyboard': [[{
+                        'text': 'Подключиться бесплатно',
+                        'callback_data': 'free_connection'
+                    }]]
+                }
+            }
+            requests.post(url, json=payload)
+            # TODO: db: create new chat with chat_id and user info
+            # TODO: db: add message from 'user' with text "/start"
 
         if user_message.lower() == 'оплата':
             send_invoice(chat_id, 100)
@@ -113,5 +141,6 @@ def webhook_petyavpn():
                 }
             }
             requests.post(url, json=payload)
+            # TODO: db: add message from 'bot' with text formatted_text
 
     return '', 200
