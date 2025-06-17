@@ -10,7 +10,7 @@ from langchain_openai import ChatOpenAI
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain import hub
-from pinecone import Pinecone
+from pinecone import (Pinecone)
 
 from utils.schedule_service import get_schedule_service
 from utils.shared_functions import send_message

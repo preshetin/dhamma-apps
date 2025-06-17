@@ -1,67 +1,67 @@
 import os
 from chatgpt_md_converter import telegram_format
-from langchain_pinecone import PineconeEmbeddings, PineconeVectorStore
-from langchain_openai import ChatOpenAI
-from langchain.prompts import ChatPromptTemplate
-from langchain.chains import create_retrieval_chain
-from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain import hub
-from pinecone import Pinecone
+# from langchain_pinecone import PineconeEmbeddings, PineconeVectorStore
+# from langchain_openai import ChatOpenAI
+# from langchain.prompts import ChatPromptTemplate
+# from langchain.chains import create_retrieval_chain
+# from langchain.chains.combine_documents import create_stuff_documents_chain
+# from langchain import hub
+# from pinecone import (Pinecone)
 import requests
 
 
-def get_answer_from_document(message, index_name, namespace):
-    # Initialize Pinecone
-    pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
+# def get_answer_from_document(message, index_name, namespace):
+#     # Initialize Pinecone
+#     pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
 
-    # Initialize the embeddings
-    model_name = 'multilingual-e5-large'
-    embeddings = PineconeEmbeddings(
-        model=model_name,
-        pinecone_api_key=os.environ.get('PINECONE_API_KEY')
-    )
+#     # Initialize the embeddings
+#     model_name = 'multilingual-e5-large'
+#     embeddings = PineconeEmbeddings(
+#         model=model_name,
+#         pinecone_api_key=os.environ.get('PINECONE_API_KEY')
+#     )
 
-    # Load the existing vector store
-    docsearch = PineconeVectorStore(
-        index_name=index_name,
-        embedding=embeddings,
-        namespace=namespace
-    )
+#     # Load the existing vector store
+#     docsearch = PineconeVectorStore(
+#         index_name=index_name,
+#         embedding=embeddings,
+#         namespace=namespace
+#     )
 
-    # Initialize the retriever
-    retriever = docsearch.as_retriever()
+#     # Initialize the retriever
+#     retriever = docsearch.as_retriever()
 
-    # Initialize the language model
-    llm = ChatOpenAI(
-        openai_api_key=os.environ.get('OPENAI_API_KEY'),
-        model_name='gpt-4o-mini',
-        temperature=0.0
-    )
+#     # Initialize the language model
+#     llm = ChatOpenAI(
+#         openai_api_key=os.environ.get('OPENAI_API_KEY'),
+#         model_name='gpt-4o-mini',
+#         temperature=0.0
+#     )
 
-    # Create the retrieval chain
-    custom_prompt = """You are a helpful assistant that answers questions based on provided context.
+#     # Create the retrieval chain
+#     custom_prompt = """You are a helpful assistant that answers questions based on provided context.
 
-    Try to include links to files or documents if the context contains them.
+#     Try to include links to files or documents if the context contains them.
     
-    <context>
-    {context}
-    </context>
+#     <context>
+#     {context}
+#     </context>
     
-    Answer the question based on the context. If you cannot find the answer in the context, say "Я не могу ответить в рамках моих знаний." Do not make up information."""
+#     Answer the question based on the context. If you cannot find the answer in the context, say "Я не могу ответить в рамках моих знаний." Do not make up information."""
 
-    retrieval_qa_chat_prompt = ChatPromptTemplate.from_messages([
-        ("system", custom_prompt),
-        ("user", "{input}"),
-    ])
+#     retrieval_qa_chat_prompt = ChatPromptTemplate.from_messages([
+#         ("system", custom_prompt),
+#         ("user", "{input}"),
+#     ])
     
-    combine_docs_chain = create_stuff_documents_chain(
-        llm, retrieval_qa_chat_prompt
-    )
-    retrieval_chain = create_retrieval_chain(retriever, combine_docs_chain)
+#     combine_docs_chain = create_stuff_documents_chain(
+#         llm, retrieval_qa_chat_prompt
+#     )
+#     retrieval_chain = create_retrieval_chain(retriever, combine_docs_chain)
 
-    answer_with_knowledge = retrieval_chain.invoke({"input": message})
+#     answer_with_knowledge = retrieval_chain.invoke({"input": message})
 
-    return answer_with_knowledge['answer']
+#     return answer_with_knowledge['answer']
 
 
 def send_slack_message(username, index_name, message):
