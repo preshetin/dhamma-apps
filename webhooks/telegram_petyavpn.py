@@ -3,6 +3,7 @@ import os
 from flask import Blueprint, request
 
 from utils.shared_functions import send_slack_message
+from utils.supabase_client import create_chat, add_message
 import json
 
 telegram_petyavpn_bp = Blueprint('telegram_petyavpn', __name__)
@@ -106,6 +107,22 @@ def webhook_petyavpn():
         user_message = update['message']['text']
 
         if user_message == '/start':
+            # Create chat record in Supabase
+            create_chat(
+                chat_id=chat_id,
+                username=user_username,
+                first_name=user_first_name,
+                last_name=user_last_name
+            )
+            
+            # Add message to Supabase
+            add_message(
+                chat_id=chat_id,
+                is_bot=False,
+                text="/start",
+                update_obj=update
+            )
+
             url = f'{API_URL}/sendMessage'
             payload = {
                 'chat_id': chat_id,
@@ -118,9 +135,16 @@ def webhook_petyavpn():
                     }]]
                 }
             }
-            requests.post(url, json=payload)
-            # TODO: db: create new chat with chat_id and user info
-            # TODO: db: add message from 'user' with text "/start"
+            response = requests.post(url, json=payload)
+            
+            # Add bot's response to messages
+            if response.ok:
+                add_message(
+                    chat_id=chat_id,
+                    is_bot=True,
+                    text=payload['text'],
+                    update_obj=response.json()
+                )
         elif user_message.lower() == 'оплата':
             send_invoice(chat_id, 100)
             send_message(chat_id, "Если у вас не получается оплатить (в РФ не работает ApplePay), попробуйте купить звезды через @PremiumBot и вернитесь сюда и нажмите кнопку оплаты.", parse_mode='html')
