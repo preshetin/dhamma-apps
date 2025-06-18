@@ -25,6 +25,7 @@ panel_client = PanelClient(
 @app.route('/')
 def get_inbounds():
     try:
+        return 'hi there'
         inbounds = panel_client.get_inbounds()
         return jsonify(inbounds)
     except Exception as e:
