@@ -1,5 +1,7 @@
 import requests
 from .supabase_client import supabase
+import uuid
+import json
 
 class PanelClient:
     def __init__(self, base_url, username, password):
@@ -48,3 +50,49 @@ class PanelClient:
             return self.get_inbounds()
         else:
             raise Exception(f"Failed to get inbounds: {response.status_code}")
+
+    def add_client(self, email):
+        """Add a client to inbound ID 2
+    
+        Args:
+            email (str): Client email identifier
+            
+        Returns:
+            dict: Response from the panel API
+        """
+        url = f"{self.base_url}/panel/inbound/addClient"
+        headers = {
+            "Cookie": self.cookie,
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+        
+        client_settings = {
+            "clients": [{
+                "id": str(uuid.uuid4()),
+                "flow": "",
+                "email": email,
+                "limitIp": 0,
+                "totalGB": 0,
+                "expiryTime": 0,
+                "enable": True,
+                "tgId": "",
+                "subId": "",  # You may want to generate this differently
+                "reset": 0
+            }]
+        }
+        
+        data = {
+            "id": 2,
+            "settings": json.dumps(client_settings)
+        }
+        
+        response = requests.post(url, headers=headers, data=data)
+        
+        if response.status_code == 200:
+            return response.json()
+        elif response.status_code == 401:
+            # If unauthorized, try to login again
+            self.cookie = self._login()
+            return self.add_client(email)
+        else:
+            raise Exception(f"Failed to add client: {response.status_code}")
