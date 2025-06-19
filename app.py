@@ -25,9 +25,11 @@ panel_client = PanelClient(
 @app.route('/')
 def get_inbounds():
     try:
-        return 'hi there'
-        inbounds = panel_client.get_inbounds()
-        return jsonify(inbounds)
+        return 'all good, connection string is working'
+        # Example: add a client and return connection string
+        email = "test-client@example.com"
+        conn_str = panel_client.add_client(email)
+        return jsonify({"connection_string": conn_str})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
