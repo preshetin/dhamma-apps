@@ -53,7 +53,7 @@ class PanelClient:
             raise Exception(f"Failed to get inbounds: {response.status_code}")
 
     def add_client(self, email, expiry_time=0, client_id=None):
-        """Add a client to inbound ID 2 and return connection string
+        """Add a client to inbound ID and return connection string
 
         Args:
             email (str): Client email identifier
@@ -63,6 +63,8 @@ class PanelClient:
         Returns:
             str: Connection string for the new client
         """
+        inbound_id = 1
+        
         url = f"{self.base_url}/panel/inbound/addClient"
         headers = {
             "Cookie": self.cookie,
@@ -87,7 +89,7 @@ class PanelClient:
         }
 
         data = {
-            "id": 2,
+            "id": inbound_id,
             "settings": json.dumps(client_settings)
         }
 
@@ -98,11 +100,11 @@ class PanelClient:
             inbounds = self.get_inbounds()
             inbound = None
             for ib in inbounds.get("obj", []):
-                if ib.get("id") == 2:
+                if ib.get("id") == inbound_id:
                     inbound = ib
                     break
             if not inbound:
-                raise Exception("Inbound 2 not found")
+                raise Exception(f"Inbound {inbound_id} not found")
             # Parse inbound settings
             settings = json.loads(inbound["settings"])
             # Find the client by id or email
