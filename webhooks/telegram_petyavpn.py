@@ -4,12 +4,19 @@ import requests
 import os
 from flask import Blueprint, request
 
-from utils import panel_client
+from utils.panel_client import PanelClient
 from utils.shared_functions import send_slack_message
 from utils.supabase_client import create_chat, add_message, create_subscription
 import json
 
 telegram_petyavpn_bp = Blueprint('telegram_petyavpn', __name__)
+
+
+panel_client = PanelClient(
+    base_url=os.environ.get('PANEL_BASE_URL'),
+    username=os.environ.get('PANEL_USERNAME'),
+    password=os.environ.get('PANEL_PASSWORD')
+)
 
 TELEGRAM_BOT_TOKEN_PETYAVPN = os.environ.get('TELEGRAM_BOT_TOKEN_PETYAVPN')
 API_URL = f'https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN_PETYAVPN}'
