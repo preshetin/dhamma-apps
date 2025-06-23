@@ -88,6 +88,7 @@ def webhook_petyavpn():
             return '', 200
 
         if callback_query['data'] == 'free_connection':
+            print('free connection 111')
             free_msg = load_free_connection_message()
             send_message(chat_id, free_msg, parse_mode='html')
             # call add_client and get connection string
@@ -102,9 +103,9 @@ def webhook_petyavpn():
 
             create_subscription(
                 chat_id=chat_id,
-                panel_client_id=str(chat_id),
+                panel_client_id=client_id,
                 email=f"{chat_id}",
-                panel_key=connection_string,
+                url=connection_string,
                 is_active=True,
                 expity_time=expiry_time,
             )

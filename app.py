@@ -1,3 +1,5 @@
+import time
+import uuid
 from dotenv import load_dotenv
 from flask import Flask, jsonify
 import os
@@ -25,10 +27,13 @@ panel_client = PanelClient(
 @app.route('/')
 def get_inbounds():
     try:
-        return 'all good, connection string is working'
+        # return 'all good, connection string is working'
         # Example: add a client and return connection string
-        email = "test-client@example.com"
-        conn_str = panel_client.add_client(email)
+        chat_id = 1111
+        expiry_time = (int(time.time()) + 7 * 24 * 60 * 60) * 1000
+        client_id = str(uuid.uuid4())
+        print('hey')
+        conn_str = panel_client.add_client(email=f"{chat_id}", expiry_time=expiry_time, client_id=client_id   )
         return jsonify({"connection_string": conn_str})
     except Exception as e:
         return jsonify({"error": str(e)}), 500

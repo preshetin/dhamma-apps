@@ -24,7 +24,7 @@ CREATE TABLE public.settings (
 CREATE TABLE public.subscriptions (
   chat_id bigint,
   panel_client_id character varying,
-  panel_key text,
+  url text,
   is_active boolean DEFAULT true,
   expity_time numeric,
   email text,
