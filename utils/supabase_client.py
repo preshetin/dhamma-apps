@@ -17,7 +17,7 @@ def create_chat(chat_id: int, username: str = None, first_name: str = None, last
             "last_name": last_name
         }
         
-        result = supabase.table("chats").insert(data).execute()
+        result = supabase.table("chats").upsert(data).execute()
         return result.data[0] if result.data else None
     except Exception as e:
         print(f"Error creating chat: {e}")
