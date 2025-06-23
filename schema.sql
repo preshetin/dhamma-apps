@@ -1,28 +1,32 @@
-CREATE TABLE chats (
-    id BIGINT PRIMARY KEY NOT NULL UNIQUE,
-    username VARCHAR,
-    first_name VARCHAR,
-    last_name VARCHAR,
-    created_at TIMESTAMP DEFAULT NOW()
+-- WARNING: This schema is for context only and is not meant to be run.
+-- Table order and constraints may not be valid for execution.
+
+CREATE TABLE public.chats (
+  id bigint NOT NULL,
+  username character varying,
+  first_name character varying,
+  last_name character varying,
+  created_at timestamp without time zone DEFAULT now(),
+  CONSTRAINT chats_pkey PRIMARY KEY (id)
 );
-
-CREATE TABLE messages (
-    chat_id BIGINT REFERENCES chats(id),
-    is_bot BOOLEAN,
-    text TEXT,
-    update_obj JSON
+CREATE TABLE public.messages (
+  chat_id bigint,
+  is_bot boolean,
+  text text,
+  update_obj json,
+  CONSTRAINT messages_chat_id_fkey FOREIGN KEY (chat_id) REFERENCES public.chats(id)
 );
-
-CREATE TABLE subscriptions (
-    chat_id BIGINT REFERENCES chats(id),
-    end_at DATE,
-    panel_client_id VARCHAR,
-    panel_key TEXT,
-    is_active BOOLEAN DEFAULT TRUE
+CREATE TABLE public.settings (
+  key character varying NOT NULL,
+  value text,
+  CONSTRAINT settings_pkey PRIMARY KEY (key)
 );
-
-
-CREATE TABLE settings (
-    key VARCHAR PRIMARY KEY,
-    value TEXT
+CREATE TABLE public.subscriptions (
+  chat_id bigint,
+  panel_client_id character varying,
+  panel_key text,
+  is_active boolean DEFAULT true,
+  expity_time numeric,
+  email text,
+  CONSTRAINT subscriptions_chat_id_fkey FOREIGN KEY (chat_id) REFERENCES public.chats(id)
 );

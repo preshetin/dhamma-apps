@@ -52,12 +52,14 @@ class PanelClient:
         else:
             raise Exception(f"Failed to get inbounds: {response.status_code}")
 
-    def add_client(self, email):
+    def add_client(self, email, expiry_time=0, client_id=None):
         """Add a client to inbound ID 2 and return connection string
-    
+
         Args:
             email (str): Client email identifier
-            
+            expiry_time (int): Expiry time in ms
+            client_id (str, optional): UUID for the client. If not provided, a new one is generated.
+
         Returns:
             str: Connection string for the new client
         """
@@ -66,8 +68,9 @@ class PanelClient:
             "Cookie": self.cookie,
             "Content-Type": "application/x-www-form-urlencoded"
         }
-        
-        client_id = str(uuid.uuid4())
+
+        if client_id is None:
+            client_id = str(uuid.uuid4())
         client_settings = {
             "clients": [{
                 "id": client_id,
@@ -75,21 +78,21 @@ class PanelClient:
                 "email": email,
                 "limitIp": 0,
                 "totalGB": 0,
-                "expiryTime": 0,
+                "expiryTime": expiry_time,
                 "enable": True,
                 "tgId": "",
                 "subId": "",  # You may want to generate this differently
                 "reset": 0
             }]
         }
-        
+
         data = {
             "id": 2,
             "settings": json.dumps(client_settings)
         }
-        
+
         response = requests.post(url, headers=headers, data=data)
-        
+
         if response.status_code == 200:
             # Now fetch inbounds to get connection string details
             inbounds = self.get_inbounds()
@@ -118,7 +121,7 @@ class PanelClient:
             sid = stream_settings.get("realitySettings", {}).get("shortIds", [""])[0]
             spx = stream_settings.get("realitySettings", {}).get("settings", {}).get("spiderX", "/")
             spx = urllib.parse.quote(spx, safe='')
-            
+
             # Compose connection string
             host = self.base_url.split("//")[-1].split("/")[0]
             host = host.split(":")[0]
@@ -135,6 +138,6 @@ class PanelClient:
         elif response.status_code == 401:
             # If unauthorized, try to login again
             self.cookie = self._login()
-            return self.add_client(email)
+            return self.add_client(email, expiry_time, client_id)
         else:
             raise Exception(f"Failed to add client: {response.status_code}")

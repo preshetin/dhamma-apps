@@ -1,9 +1,12 @@
+import time
+import uuid
 import requests
 import os
 from flask import Blueprint, request
 
+from utils import panel_client
 from utils.shared_functions import send_slack_message
-from utils.supabase_client import create_chat, add_message
+from utils.supabase_client import create_chat, add_message, create_subscription
 import json
 
 telegram_petyavpn_bp = Blueprint('telegram_petyavpn', __name__)
@@ -35,6 +38,12 @@ def send_invoice(chat_id, amount):
         'need_shipping_address': False,
     }
     requests.post(url, json=payload)
+
+def load_free_connection_message():
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    msg_path = os.path.join(base_dir, "free_connection_message.txt")
+    with open(msg_path, encoding="utf-8") as f:
+        return f.read()
 
 @telegram_petyavpn_bp.route('/webhook-petyavpn', methods=['POST'])
 def webhook_petyavpn():
@@ -72,7 +81,27 @@ def webhook_petyavpn():
             return '', 200
 
         if callback_query['data'] == 'free_connection':
-            send_message(chat_id, "Вот инструкция и ваш ключ (В разработке. Пока пишите Пете @preshetin)", parse_mode='html')
+            free_msg = load_free_connection_message()
+            send_message(chat_id, free_msg, parse_mode='html')
+            # call add_client and get connection string
+
+            expiry_time = (int(time.time()) + 7 * 24 * 60 * 60) * 1000
+
+            client_id = str(uuid.uuid4())
+
+            connection_string = panel_client.add_client(email=f"{chat_id}", expiry_time=expiry_time, client_id=client_id   )
+
+            send_message(chat_id, f"Ваш бесплатный VPN активирован на 7 дней! \n\n Вот ваша ссылка для подключения: \n\n<code>{connection_string}</code> \n\n Если есть вопросы, напишите Пете @preshetin", parse_mode='html')
+
+            create_subscription(
+                chat_id=chat_id,
+                panel_client_id=str(chat_id),
+                email=f"{chat_id}",
+                panel_key=connection_string,
+                is_active=True,
+                expity_time=expiry_time,
+            )
+
             # TODO: panel_api: create new client in 3x-ui panel, set end_at to 7 days from now
             # TODO: db: add new message from 'bot' with text "free_connection instruction and key" 
 
@@ -126,7 +155,7 @@ def webhook_petyavpn():
             url = f'{API_URL}/sendMessage'
             payload = {
                 'chat_id': chat_id,
-                'text': "Привет! 👋",
+            'text': "Привет! 👋 Это VPN от Пети @preshetin. \n\n 7 дней бесплатно \n\n Далее 100 звезд Телеграм (~170 ₽) в месяц",
                 'parse_mode': 'html',
                 'reply_markup': {
                     'inline_keyboard': [[{

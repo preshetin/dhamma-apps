@@ -38,3 +38,27 @@ def add_message(chat_id: int, is_bot: bool, text: str, update_obj: dict = None):
     except Exception as e:
         print(f"Error adding message: {e}")
         return None
+
+def create_subscription(
+    chat_id: int,
+    panel_client_id: str = None,
+    panel_key: str = None,
+    is_active: bool = True,
+    expity_time: float = None,
+    email: str = None
+):
+    """Create a new subscription record in Supabase"""
+    try:
+        data = {
+            "chat_id": chat_id,
+            "panel_client_id": panel_client_id,
+            "panel_key": panel_key,
+            "is_active": is_active,
+            "expity_time": expity_time,
+            "email": email
+        }
+        result = supabase.table("subscriptions").insert(data).execute()
+        return result.data[0] if result.data else None
+    except Exception as e:
+        print(f"Error creating subscription: {e}")
+        return None
