@@ -55,7 +55,7 @@ def load_free_connection_message():
 @telegram_petyavpn_bp.route('/webhook-petyavpn', methods=['POST'])
 def webhook_petyavpn():
     update = request.get_json()
-    send_slack_message('some_user', 'foo', json.dumps(update))
+    send_slack_message('some_user', 'foo 1', json.dumps(update))
 
     # return '', 200
     
