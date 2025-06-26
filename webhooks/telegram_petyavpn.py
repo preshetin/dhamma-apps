@@ -105,14 +105,16 @@ def webhook_petyavpn():
 
             client_id = str(uuid.uuid4())
 
-            connection_string = panel_client.add_client(email=f"{chat_id}-{user_username}", expiry_time=expiry_time, client_id=client_id   )
+            email  = f"{chat_id}-{user_username}"
+
+            connection_string = panel_client.add_client(email=email, expiry_time=expiry_time, client_id=client_id   )
 
             send_message(chat_id, f"Ваш бесплатный VPN активирован на 7 дней! \n\n Вот ваша ссылка для подключения: \n\n<code>{connection_string}</code> \n\n Если есть вопросы, напишите Пете @preshetin", parse_mode='html')
 
             create_subscription(
                 chat_id=chat_id,
                 panel_client_id=client_id,
-                email=f"{chat_id}",
+                email=email,
                 url=connection_string,
                 is_active=True,
                 expity_time=expiry_time,
