@@ -63,7 +63,7 @@ def get_username(update):
 def webhook_petyavpn():
     update = request.get_json()
     user_username = get_username(update)
-    send_slack_message('some_user', 'foo 1', json.dumps(update))
+    send_slack_message(user_username, 'foo 2', json.dumps(update))
 
     # return '', 200
     
