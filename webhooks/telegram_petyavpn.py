@@ -52,9 +52,17 @@ def load_free_connection_message():
     with open(msg_path, encoding="utf-8") as f:
         return f.read()
 
+def get_username(update):
+    if 'message' in update and 'from' in update['message']:
+        return update['message']['from'].get('username', '')
+    elif 'callback_query' in update and 'from' in update['callback_query']:
+        return update['callback_query']['from'].get('username', '')
+    return ''
+
 @telegram_petyavpn_bp.route('/webhook-petyavpn', methods=['POST'])
 def webhook_petyavpn():
     update = request.get_json()
+    user_username = get_username(update)
     send_slack_message('some_user', 'foo 1', json.dumps(update))
 
     # return '', 200
