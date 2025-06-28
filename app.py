@@ -29,11 +29,25 @@ def get_inbounds():
     try:
         # return 'all good, connection string is working'
         # Example: add a client and return connection string
-        chat_id = 1111
-        expiry_time = (int(time.time()) + 7 * 24 * 60 * 60) * 1000
-        client_id = str(uuid.uuid4())
+        expiry_time = (int(time.time()) + 14 * 24 * 60 * 60) * 1000
+        # client_id = str(uuid.uuid4())
         print('hey')
-        conn_str = panel_client.add_client(email=f"{chat_id}", expiry_time=expiry_time, client_id=client_id   )
+
+        client_id = '87cfce68-48d2-49e1-b1ea-e42ca1255636' # 6527907-preshetin
+        client = panel_client.get_client_by_id(client_id)
+
+        if client:
+            print('client found')
+            client['expiryTime'] = expiry_time
+            panel_client.update_client(client_id=client_id, client_data=client)
+            return 'client updated'
+        else:
+            return 'client not found'
+
+
+        # return client
+        
+        # conn_str = panel_client.add_client(email=f"{chat_id}", expiry_time=expiry_time, client_id=client_id   )
         return jsonify({"connection_string": conn_str})
     except Exception as e:
         return jsonify({"error": str(e)}), 500

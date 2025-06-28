@@ -173,3 +173,50 @@ class PanelClient:
             settings = json.loads(ib.get("settings", "{}"))
             clients.extend(settings.get("clients", []))
         return clients
+
+    def update_client(self, client_id, client_data, inbound_id=1):
+        """
+        Update a client by client_id.
+
+        Args:
+            client_id (str): The UUID of the client.
+            client_data (dict): The client data to update (should include all required fields).
+                Example:
+                {
+                    "id": "4fd2b6d5-6a28-455a-8869-3f57e71d58da",
+                    "flow": "",
+                    "email": "6527907-preshetin",
+                    "limitIp": 0,
+                    "totalGB": 0,
+                    "expiryTime": 1751609375000,
+                    "enable": True,
+                    "tgId": "",
+                    "subId": "",
+                    "comment": "",
+                    "reset": 0
+                }
+            inbound_id (int, optional): The inbound ID. Defaults to 1.
+
+        Returns:
+            bool: True if update was successful, raises Exception otherwise.
+        """
+        url = f"{self.base_url}/panel/inbound/updateClient/{client_id}"
+        headers = {
+            "Cookie": self.cookie,
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+        client_settings = {
+            "clients": [client_data]
+        }
+        data = {
+            "id": inbound_id,
+            "settings": json.dumps(client_settings)
+        }
+        response = requests.post(url, headers=headers, data=data)
+        if response.status_code == 200:
+            return True
+        elif response.status_code == 401:
+            self.cookie = self._login()
+            return self.update_client(client_id, client_data, inbound_id)
+        else:
+            raise Exception(f"Failed to update client: {response.status_code} {response.text}")
