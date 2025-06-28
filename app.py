@@ -27,7 +27,7 @@ panel_client = PanelClient(
 @app.route('/')
 def get_inbounds():
     try:
-        # return 'all good, connection string is working'
+        return 'all good'
         # Example: add a client and return connection string
         expiry_time = (int(time.time()) + 14 * 24 * 60 * 60) * 1000
         # client_id = str(uuid.uuid4())
