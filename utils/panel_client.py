@@ -64,7 +64,7 @@ class PanelClient:
             str: Connection string for the new client
         """
         inbound_id = 1
-        
+
         url = f"{self.base_url}/panel/inbound/addClient"
         headers = {
             "Cookie": self.cookie,
@@ -83,7 +83,7 @@ class PanelClient:
                 "expiryTime": expiry_time,
                 "enable": True,
                 "tgId": "",
-                "subId": "",  # You may want to generate this differently
+                "subId": "",
                 "reset": 0
             }]
         }
@@ -96,50 +96,48 @@ class PanelClient:
         response = requests.post(url, headers=headers, data=data)
 
         if response.status_code == 200:
-            # Now fetch inbounds to get connection string details
-            inbounds = self.get_inbounds()
-            inbound = None
-            for ib in inbounds.get("obj", []):
-                if ib.get("id") == inbound_id:
-                    inbound = ib
-                    break
-            if not inbound:
-                raise Exception(f"Inbound {inbound_id} not found")
-            # Parse inbound settings
-            settings = json.loads(inbound["settings"])
-            # Find the client by id or email
-            client = None
-            for c in settings.get("clients", []):
-                if c.get("id") == client_id or c.get("email") == email:
-                    client = c
-                    break
-            if not client:
-                raise Exception("Client not found in inbound settings")
-            # Parse streamSettings and get pbk, fp, sni, sid, spx
-            stream_settings = json.loads(inbound["streamSettings"])
-            pbk = stream_settings.get("realitySettings", {}).get("settings", {}).get("publicKey", "")
-            fp = stream_settings.get("realitySettings", {}).get("settings", {}).get("fingerprint", "")
-            sni = stream_settings.get("realitySettings", {}).get("serverNames", [""])[0]
-            sid = stream_settings.get("realitySettings", {}).get("shortIds", [""])[0]
-            spx = stream_settings.get("realitySettings", {}).get("settings", {}).get("spiderX", "/")
-            spx = urllib.parse.quote(spx, safe='')
-
-            # Compose connection string
-            host = self.base_url.split("//")[-1].split("/")[0]
-            host = host.split(":")[0]
-            port = inbound.get("port")
-            protocol = inbound.get("protocol")
-            remark = inbound.get("remark")
-            conn_str = (
-                f"{protocol}://{client['id']}@{host}:{port}"
-                f"?type=tcp&security=reality"
-                f"&pbk={pbk}&fp={fp}&sni={sni}&sid={sid}&spx={spx}"
-                f"#{remark}-{email}"
-            )
-            return conn_str
+            return self.get_connection_string(inbound_id, client_id, email)
         elif response.status_code == 401:
-            # If unauthorized, try to login again
             self.cookie = self._login()
             return self.add_client(email, expiry_time, client_id)
         else:
             raise Exception(f"Failed to add client: {response.status_code}")
+
+    def get_connection_string(self, inbound_id, client_id, email):
+        """Fetch inbounds and compose connection string for the client."""
+        inbounds = self.get_inbounds()
+        inbound = None
+        for ib in inbounds.get("obj", []):
+            if ib.get("id") == inbound_id:
+                inbound = ib
+                break
+        if not inbound:
+            raise Exception(f"Inbound {inbound_id} not found")
+        settings = json.loads(inbound["settings"])
+        client = None
+        for c in settings.get("clients", []):
+            if c.get("id") == client_id or c.get("email") == email:
+                client = c
+                break
+        if not client:
+            raise Exception("Client not found in inbound settings")
+        stream_settings = json.loads(inbound["streamSettings"])
+        pbk = stream_settings.get("realitySettings", {}).get("settings", {}).get("publicKey", "")
+        fp = stream_settings.get("realitySettings", {}).get("settings", {}).get("fingerprint", "")
+        sni = stream_settings.get("realitySettings", {}).get("serverNames", [""])[0]
+        sid = stream_settings.get("realitySettings", {}).get("shortIds", [""])[0]
+        spx = stream_settings.get("realitySettings", {}).get("settings", {}).get("spiderX", "/")
+        spx = urllib.parse.quote(spx, safe='')
+
+        host = self.base_url.split("//")[-1].split("/")[0]
+        host = host.split(":")[0]
+        port = inbound.get("port")
+        protocol = inbound.get("protocol")
+        remark = inbound.get("remark")
+        conn_str = (
+            f"{protocol}://{client['id']}@{host}:{port}"
+            f"?type=tcp&security=reality"
+            f"&pbk={pbk}&fp={fp}&sni={sni}&sid={sid}&spx={spx}"
+            f"#{remark}-{email}"
+        )
+        return conn_str
