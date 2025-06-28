@@ -159,3 +159,17 @@ class PanelClient:
                 if client.get("id") == client_id:
                     return client
         return
+
+    def get_clients(self):
+        """
+        Retrieve all clients from all inbounds.
+
+        Returns:
+            list: A list of all client objects.
+        """
+        clients = []
+        inbounds = self.get_inbounds()
+        for ib in inbounds.get("obj", []):
+            settings = json.loads(ib.get("settings", "{}"))
+            clients.extend(settings.get("clients", []))
+        return clients
