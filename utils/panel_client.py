@@ -141,3 +141,21 @@ class PanelClient:
             f"#{remark}-{email}"
         )
         return conn_str
+
+    def get_client_by_id(self, client_id):
+        """
+        Retrieve client information by client_id from all inbounds.
+
+        Args:
+            client_id (str): The UUID of the client.
+
+        Returns:
+            dict: The client object if found, otherwise None.
+        """
+        inbounds = self.get_inbounds()
+        for ib in inbounds.get("obj", []):
+            settings = json.loads(ib.get("settings", "{}"))
+            for client in settings.get("clients", []):
+                if client.get("id") == client_id:
+                    return client
+        return
