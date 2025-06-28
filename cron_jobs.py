@@ -12,7 +12,7 @@ def cron_hello():
 
 if __name__ == '__main__':
     scheduler = BlockingScheduler()
-    scheduler.add_job(cron_hello, 'interval', minutes=1)
+    scheduler.add_job(cron_hello, 'interval', minutes=60)
     print("Starting scheduler...")
     try:
         scheduler.start()
