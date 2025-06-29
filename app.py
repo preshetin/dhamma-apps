@@ -5,6 +5,7 @@ from flask import Flask, jsonify
 import os
 
 from api import register_api
+from utils.supabase_client import get_chats
 from webhooks import register_webhooks
 from utils.panel_client import PanelClient
 
@@ -27,14 +28,17 @@ panel_client = PanelClient(
 @app.route('/')
 def get_inbounds():
     try:
-        return 'all good'
+        # return 'all good'
         # Example: add a client and return connection string
         expiry_time = (int(time.time()) + 14 * 24 * 60 * 60) * 1000
         # client_id = str(uuid.uuid4())
         print('hey')
 
-        client_id = '87cfce68-48d2-49e1-b1ea-e42ca1255636' # 6527907-preshetin
-        client = panel_client.get_client_by_id(client_id)
+        # client_id = '87cfce68-48d2-49e1-b1ea-e42ca1255636' # 6527907-preshetin
+        # client = panel_client.get_client_by_id(client_id)
+
+        chats = get_chats()
+        return chats
 
         if client:
             print('client found')

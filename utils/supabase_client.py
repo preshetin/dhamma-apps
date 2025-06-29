@@ -1,4 +1,6 @@
 import os
+# from dotenv import load_dotenv
+# load_dotenv()
 from supabase import create_client, Client
 
 # Initialize Supabase client
@@ -22,6 +24,15 @@ def create_chat(chat_id: int, username: str = None, first_name: str = None, last
     except Exception as e:
         print(f"Error creating chat: {e}")
         return None
+
+def get_chats():
+    """Get all chat records from Supabase"""
+    try:
+        result = supabase.table("chats").select("*").execute()
+        return result.data if result.data else []
+    except Exception as e:
+        print(f"Error fetching chats: {e}")
+        return []
 
 def add_message(chat_id: int, is_bot: bool, text: str, update_obj: dict = None):
     """Add a message record to Supabase"""
