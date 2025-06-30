@@ -21,7 +21,7 @@ panel_client = PanelClient(
 TELEGRAM_BOT_TOKEN_PETYAVPN = os.environ.get('TELEGRAM_BOT_TOKEN_PETYAVPN')
 API_URL = f'https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN_PETYAVPN}'
 
-VPN_MONTHLY_AMOUNT = 3  # Amount in stars for one month of VPN
+VPN_MONTHLY_AMOUNT = 100  # Amount in stars for one month of VPN
 
 def send_message(chat_id, text, parse_mode='html'):
     url = f'{API_URL}/sendMessage'
