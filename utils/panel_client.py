@@ -220,3 +220,21 @@ class PanelClient:
             return self.update_client(client_id, client_data, inbound_id)
         else:
             raise Exception(f"Failed to update client: {response.status_code} {response.text}")
+
+    def get_first_client_by_chat_id(self, chat_id):
+        """
+        Retrieve the first client whose email starts with the given chat_id followed by a dash.
+
+        Args:
+            chat_id (str or int): The chat id to search for.
+
+        Returns:
+            dict: The client object if found, otherwise None.
+        """
+        chat_id_str = str(chat_id)
+        clients = self.get_clients()
+        for client in clients:
+            email = client.get('email', '')
+            if email.startswith(f"{chat_id_str}-"):
+                return client
+        return None

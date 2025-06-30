@@ -30,13 +30,13 @@ def send_message(chat_id, text, parse_mode='html'):
     }
     requests.post(url, json=payload)
 
-def send_invoice(chat_id, amount):
+def send_invoice(chat_id, amount, payload_data=None):
     url = f'{API_URL}/sendInvoice'
     payload = {
         'chat_id': chat_id,
         'title': 'Один месяц VPN',
         'description': 'Использование VPN в течение одного месяца',
-        'payload': 'stars_payment',
+        'payload': json.dumps(payload_data) if payload_data else 'stars_payment',
         'currency': 'XTR',
         'prices': [{'label': f"{amount} Stars", 'amount': amount}],
         'need_name': False,
@@ -143,11 +143,51 @@ def webhook_petyavpn():
 
         # Handle successful payment
         if 'successful_payment' in update['message']:
-            send_message(chat_id, f"Спасибо за оплату, {user_first_name} {user_last_name} (@{user_username})! \n\nVPN активирован на месяц. \n\nЕсли есть вопросы, напиши Пете @preshetin")
-            # TODO: db: add one month to subscription end_at date
-            # TODO: db: add message from 'user' with text "successful_payment"
-            # TODO: db add new payment with amount 100 stars and chat_id
-            # TODO: panel_api: activate client in 3x-ui panel, set end_at to 30 days from now
+            payment_info = update['message']['successful_payment']
+            invoice_payload = payment_info.get('invoice_payload', '')
+            chat_id = update['message']['chat']['id']
+            user_info = update['message']['from']
+            user_first_name = user_info.get('first_name', '')
+            user_last_name = user_info.get('last_name', '')
+            user_username = user_info.get('username', '')
+            amount = payment_info.get('total_amount', 100)
+            currency = payment_info.get('currency', 'XTR')
+            transaction_id = payment_info.get('telegram_payment_charge_id', '')
+            comment = ''
+            client_id = None
+            # Try to extract client_id from payload
+            try:
+                payload_data = json.loads(invoice_payload)
+                client_id = payload_data.get('client_id')
+            except Exception:
+                pass
+            client = None
+            if client_id:
+                client = panel_client.get_client_by_id(client_id)
+            if not client:
+                # Try to get first client by chat id
+                client = panel_client.get_first_client_by_chat_id(chat_id)
+            if not client:
+                # Create new client for this chat id
+                expiry_time = (int(time.time()) + 30 * 24 * 60 * 60) * 1000
+                email = f"{chat_id}-{user_username}"
+                client_id = str(uuid.uuid4())
+                panel_client.add_client(email=email, expiry_time=expiry_time, client_id=client_id)
+                client = panel_client.get_client_by_id(client_id)
+            # Calculate new expiry time
+            now_ms = int(time.time() * 1000)
+            old_expiry = client.get('expiryTime', 0)
+            if old_expiry < now_ms:
+                new_expiry = now_ms + 30 * 24 * 60 * 60 * 1000
+            else:
+                new_expiry = old_expiry + 30 * 24 * 60 * 60 * 1000
+            client['expiryTime'] = new_expiry
+            panel_client.update_client(client['id'], client)
+            # Notify user
+            new_expiry_date = time.strftime('%d.%m.%Y', time.localtime(new_expiry / 1000))
+            send_message(chat_id, f"Спасибо за оплату, {user_first_name} {user_last_name} (@{user_username})!\n\nVPN активирован до {new_expiry_date}.\n\nЕсли есть вопросы, напиши Пете @preshetin")
+            # Add payment record to payments table (Supabase or DB logic to be implemented)
+            # add_payment(chat_id, amount, currency, comment, transaction_id)
             return '', 200
            
         # Handle regular message

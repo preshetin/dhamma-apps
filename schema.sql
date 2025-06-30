@@ -30,3 +30,12 @@ CREATE TABLE public.subscriptions (
   email text,
   CONSTRAINT subscriptions_chat_id_fkey FOREIGN KEY (chat_id) REFERENCES public.chats(id)
 );
+CREATE TABLE public.payments (
+  id serial PRIMARY KEY,
+  amount integer NOT NULL,
+  currency_code character varying NOT NULL,
+  chat_id bigint REFERENCES public.chats(id),
+  comment text,
+  transaction_id character varying,
+  created_at timestamp without time zone DEFAULT now()
+);

@@ -31,7 +31,9 @@ def cron_upcoming_payment_check():
                 try:
                     chat_id_int = int(chat_id)
                     send_message(chat_id_int, "⏰ Срок действия вашего VPN истекает в течение 24 часов. Пожалуйста, оплатите, чтобы продлить доступ.")
-                    send_invoice(chat_id_int, 100)  # Assuming 100 is the amount in Stars
+                    # Add client_id to payload for invoice
+                    amount = 1
+                    send_invoice(chat_id_int, amount=amount, payload_data={"client_id": client.get("id")})
                 except Exception as e:
                     print(f"Failed to send message to chat_id {chat_id}: {e}")
 
