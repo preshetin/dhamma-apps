@@ -74,31 +74,7 @@ def webhook_petyavpn():
         callback_query = update['callback_query']
         chat_id = callback_query['message']['chat']['id']
 
-        if callback_query['data'] == 'confirm_stars_purchase':
-            # send_invoice(chat_id, VPN_MONTHLY_AMOUNT)
-            # TODO: db: add message from 'user' with text "confirm_stars_purchase"
-            send_slack_message(user_username, 'todo: remove this', json.dumps(callback_query))
-        
-        if callback_query['data'] == 'pay_button_clicked':
-            url = f'{API_URL}/sendMessage'
-            payload = {
-                'chat_id': chat_id,
-                'text': "Оплата VPN производится через покупку звезды телеграм. \n\n Чтобы купить звезды, перейдите в @PremiumBot. \n\nМесяц VPN составляет <b>100 звезд</b> (~180₽, точная сумма зависит от курса рубля и комиссии Telegram)  \n\nКак пополните баланс, возвращайтесь сюда",
-                'parse_mode': 'html',
-                'reply_markup': {
-                    'inline_keyboard': [[{
-                        'text': 'Я купил(a) звезды',
-                        'callback_data': 'confirm_stars_purchase'
-                    }]]
-                }
-            }
-            requests.post(url, json=payload)
-            # TODO: db: add message from 'bot' with text payload.text
-            
-            return '', 200
-
         if callback_query['data'] == 'free_connection':
-            print('free connection 111')
             free_msg = load_free_connection_message()
             send_message(chat_id, free_msg, parse_mode='html')
             # call add_client and get connection string
@@ -127,7 +103,37 @@ def webhook_petyavpn():
 
     # Handle pre_checkout_query
     if 'pre_checkout_query' in update:
-        pre_checkout_query_id = update['pre_checkout_query']['id']
+        pre_checkout_query = update['pre_checkout_query']
+        pre_checkout_query_id = pre_checkout_query['id']
+        invoice_payload = pre_checkout_query.get('invoice_payload', '')
+        client_id = None
+        try:
+            payload_data = json.loads(invoice_payload)
+            client_id = payload_data.get('client_id')
+        except Exception:
+            client_id = None
+
+        # Check client_id presence and validity
+        client = None
+        if client_id:
+            client = panel_client.get_client_by_id(client_id)
+
+        if not client_id or not client:
+            # Respond with ok: False and error message
+            url = f'{API_URL}/answerPreCheckoutQuery'
+            payload = {
+                'pre_checkout_query_id': pre_checkout_query_id,
+                'ok': False,
+                'error_message': 'Не удалось обработать оплату. Пожалуйста, попробуйте позже или обратитесь к @preshetin.'
+            }
+            requests.post(url, json=payload)
+            send_slack_message(
+                get_username(update),
+                "Error: client_id not found or invalid in pre_checkout_query payload",
+                json.dumps(update)
+            )
+            return '', 200
+
         url = f'{API_URL}/answerPreCheckoutQuery'
         payload = {
             'pre_checkout_query_id': pre_checkout_query_id,
@@ -233,25 +239,11 @@ def webhook_petyavpn():
                     update_obj=response.json()
                 )
         elif user_message.lower() == 'оплата':
-            # send_invoice(chat_id, VPN_MONTHLY_AMOUNT)
-            # send_message(chat_id, "Если у вас не получается оплатить (в РФ не работает ApplePay), попробуйте купить звезды через @PremiumBot и вернитесь сюда и нажмите кнопку оплаты.", parse_mode='html')
+            send_invoice(chat_id, VPN_MONTHLY_AMOUNT)
+            send_message(chat_id, "Если у вас не получается оплатить (в РФ не работает ApplePay), попробуйте купить звезды через @PremiumBot и вернитесь сюда и нажмите кнопку оплаты.", parse_mode='html')
             send_slack_message(user_username, 'todo: remove this', json.dumps(update))
         else:
-            # Regular message handling
-            url = f'{API_URL}/sendMessage'
-            formatted_text = user_message
-            payload = {
-                'chat_id': chat_id,
-                'text': f"Я пока только уменю принимать оплату. \n\nЕсли есть вопрос, напиши Пете @preshetin",
-                'parse_mode': 'html',
-                'reply_markup': {
-                    'inline_keyboard': [[{
-                        'text': 'Оплатить',
-                        'callback_data': 'pay_button_clicked'
-                    }]]
-                }
-            }
-            requests.post(url, json=payload)
-            # TODO: db: add message from 'bot' with text formatted_text
+            formatted_text = "Привет! 👋\n\nЧтобы подключиться к VPN, отправьте мне /start.\n\nЕсли у вас есть вопросы, напишите Пете @preshetin" 
+            send_message(chat_id, formatted_text, parse_mode='html')
 
     return '', 200

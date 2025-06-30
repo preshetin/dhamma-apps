@@ -33,6 +33,8 @@ def cron_upcoming_payment_check():
                     send_message(chat_id_int, "⏰ Срок действия вашего VPN истекает в течение 24 часов. Пожалуйста, оплатите, чтобы продлить доступ.")
                     # Add client_id to payload for invoice
                     send_invoice(chat_id_int, amount=VPN_MONTHLY_AMOUNT, payload_data={"client_id": client.get("id")})
+                    send_message(chat_id_int, "Если у вас не получается оплатить (в РФ не работает ApplePay), попробуйте купить звезды через @PremiumBot и вернитесь сюда и нажмите кнопку оплаты.", parse_mode='html')
+                    
                     send_slack_message("cron_upcoming_payment_check", "system", f"Sent invoice to {chat_id_int} for client `{email}`")
                 except Exception as e:
                     print(f"Failed to send message to chat_id {chat_id}: {e}")
