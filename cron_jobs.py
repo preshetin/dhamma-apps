@@ -42,7 +42,7 @@ def cron_upcoming_payment_check():
 if __name__ == '__main__':
   # cron_upcoming_payment_check()
     scheduler = BlockingScheduler()
-    scheduler.add_job(cron_upcoming_payment_check, 'interval', minutes=180)
+    scheduler.add_job(cron_upcoming_payment_check, 'interval', minutes=1)
     print("Starting scheduler...")
     try:
         scheduler.start()
