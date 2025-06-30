@@ -46,7 +46,7 @@ if __name__ == '__main__':
       cron_upcoming_payment_check,
       'cron',
       hour=14,
-      minute=16,
+      minute=38,
       timezone='Europe/Moscow'  # GMT+3
     )
     print("Starting scheduler...")

@@ -6,7 +6,7 @@ from flask import Blueprint, request
 
 from utils.panel_client import PanelClient
 from utils.shared_functions import send_slack_message
-from utils.supabase_client import create_chat, add_message, create_subscription
+from utils.supabase_client import create_chat, add_message, create_subscription,create_payment
 import json
 
 telegram_petyavpn_bp = Blueprint('telegram_petyavpn', __name__)
@@ -21,7 +21,7 @@ panel_client = PanelClient(
 TELEGRAM_BOT_TOKEN_PETYAVPN = os.environ.get('TELEGRAM_BOT_TOKEN_PETYAVPN')
 API_URL = f'https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN_PETYAVPN}'
 
-VPN_MONTHLY_AMOUNT = 2  # Amount in stars for one month of VPN
+VPN_MONTHLY_AMOUNT = 100  # Amount in stars for one month of VPN
 
 def send_message(chat_id, text, parse_mode='html'):
     url = f'{API_URL}/sendMessage'
@@ -192,8 +192,15 @@ def webhook_petyavpn():
             # Notify user
             new_expiry_date = time.strftime('%d.%m.%Y', time.localtime(new_expiry / 1000))
             send_message(chat_id, f"Спасибо за оплату, {user_first_name} {user_last_name} (@{user_username})!\n\nVPN активирован до {new_expiry_date}.\n\nЕсли есть вопросы, напиши Пете @preshetin")
-            # Add payment record to payments table (Supabase or DB logic to be implemented)
-            # add_payment(chat_id, amount, currency, comment, transaction_id)
+
+            comment = f"Payment from old expiry date {time.strftime('%d.%m.%Y', time.localtime(old_expiry / 1000))} to new expiry {new_expiry_date}"
+            create_payment(
+                chat_id=chat_id,
+                amount=amount,
+                currency_code=currency,
+                comment=comment,
+                transaction_id=transaction_id
+            )
             return '', 200
            
         # Handle regular message

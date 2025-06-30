@@ -73,3 +73,33 @@ def create_subscription(
     except Exception as e:
         print(f"Error creating subscription: {e}")
         return None
+
+def create_payment(
+    chat_id: int,
+    amount: int,
+    currency_code: str,
+    comment: str = None,
+    transaction_id: str = None
+):
+    """Create a new payment record in Supabase
+
+    Args:
+        chat_id: Telegram chat id (bigint)
+        amount: Payment amount (integer)
+        currency_code: Payment currency (str)
+        comment: Optional comment (str)
+        transaction_id: Optional transaction id (str)
+    """
+    try:
+        data = {
+            "chat_id": chat_id,
+            "amount": amount,
+            "currency_code": currency_code,
+            "comment": comment,
+            "transaction_id": transaction_id
+        }
+        result = supabase.table("payments").insert(data).execute()
+        return result.data[0] if result.data else None
+    except Exception as e:
+        print(f"Error creating payment: {e}")
+        return None
