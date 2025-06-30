@@ -75,8 +75,9 @@ def webhook_petyavpn():
         chat_id = callback_query['message']['chat']['id']
 
         if callback_query['data'] == 'confirm_stars_purchase':
-            send_invoice(chat_id, VPN_MONTHLY_AMOUNT)
+            # send_invoice(chat_id, VPN_MONTHLY_AMOUNT)
             # TODO: db: add message from 'user' with text "confirm_stars_purchase"
+            send_slack_message(user_username, 'todo: remove this', json.dumps(callback_query))
         
         if callback_query['data'] == 'pay_button_clicked':
             url = f'{API_URL}/sendMessage'
@@ -162,19 +163,17 @@ def webhook_petyavpn():
                 client_id = payload_data.get('client_id')
             except Exception:
                 pass
-            client = None
-            if client_id:
-                client = panel_client.get_client_by_id(client_id)
+            if not client_id:
+                # If client_id is not present, do not try to extend time or create a new client
+                send_message(chat_id, f"Ошибка: не удалось определить клиента для продления VPN. Пожалуйста, обратитесь к @preshetin")
+                send_slack_message(user_username, "Error: client_id not found in payment payload", json.dumps(update))
+                return '', 200
+            client = panel_client.get_client_by_id(client_id)
             if not client:
-                # Try to get first client by chat id
-                client = panel_client.get_first_client_by_chat_id(chat_id)
-            if not client:
-                # Create new client for this chat id
-                expiry_time = (int(time.time()) + 30 * 24 * 60 * 60) * 1000
-                email = f"{chat_id}-{user_username}"
-                client_id = str(uuid.uuid4())
-                panel_client.add_client(email=email, expiry_time=expiry_time, client_id=client_id)
-                client = panel_client.get_client_by_id(client_id)
+                # If client is not found, do not proceed
+                send_message(chat_id, f"Ошибка: не удалось найти клиента для продления VPN. Пожалуйста, обратитесь к @preshetin")
+                send_slack_message(user_username, "Error: client not found", json.dumps(update))
+                return '', 200
             # Calculate new expiry time
             now_ms = int(time.time() * 1000)
             old_expiry = client.get('expiryTime', 0)
@@ -234,8 +233,9 @@ def webhook_petyavpn():
                     update_obj=response.json()
                 )
         elif user_message.lower() == 'оплата':
-            send_invoice(chat_id, VPN_MONTHLY_AMOUNT)
-            send_message(chat_id, "Если у вас не получается оплатить (в РФ не работает ApplePay), попробуйте купить звезды через @PremiumBot и вернитесь сюда и нажмите кнопку оплаты.", parse_mode='html')
+            # send_invoice(chat_id, VPN_MONTHLY_AMOUNT)
+            # send_message(chat_id, "Если у вас не получается оплатить (в РФ не работает ApplePay), попробуйте купить звезды через @PremiumBot и вернитесь сюда и нажмите кнопку оплаты.", parse_mode='html')
+            send_slack_message(user_username, 'todo: remove this', json.dumps(update))
         else:
             # Regular message handling
             url = f'{API_URL}/sendMessage'
