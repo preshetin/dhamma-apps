@@ -21,6 +21,8 @@ panel_client = PanelClient(
 TELEGRAM_BOT_TOKEN_PETYAVPN = os.environ.get('TELEGRAM_BOT_TOKEN_PETYAVPN')
 API_URL = f'https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN_PETYAVPN}'
 
+VPN_MONTHLY_AMOUNT = 100  # Amount in stars for one month of VPN
+
 def send_message(chat_id, text, parse_mode='html'):
     url = f'{API_URL}/sendMessage'
     payload = {
@@ -30,7 +32,7 @@ def send_message(chat_id, text, parse_mode='html'):
     }
     requests.post(url, json=payload)
 
-def send_invoice(chat_id, amount, payload_data=None):
+def send_invoice(chat_id, amount=VPN_MONTHLY_AMOUNT, payload_data=None):
     url = f'{API_URL}/sendInvoice'
     payload = {
         'chat_id': chat_id,
@@ -73,8 +75,7 @@ def webhook_petyavpn():
         chat_id = callback_query['message']['chat']['id']
 
         if callback_query['data'] == 'confirm_stars_purchase':
-            amount = 100
-            send_invoice(chat_id, amount)
+            send_invoice(chat_id, VPN_MONTHLY_AMOUNT)
             # TODO: db: add message from 'user' with text "confirm_stars_purchase"
         
         if callback_query['data'] == 'pay_button_clicked':
@@ -150,7 +151,7 @@ def webhook_petyavpn():
             user_first_name = user_info.get('first_name', '')
             user_last_name = user_info.get('last_name', '')
             user_username = user_info.get('username', '')
-            amount = payment_info.get('total_amount', 100)
+            amount = payment_info.get('total_amount', VPN_MONTHLY_AMOUNT)
             currency = payment_info.get('currency', 'XTR')
             transaction_id = payment_info.get('telegram_payment_charge_id', '')
             comment = ''
@@ -233,7 +234,7 @@ def webhook_petyavpn():
                     update_obj=response.json()
                 )
         elif user_message.lower() == 'оплата':
-            send_invoice(chat_id, 100)
+            send_invoice(chat_id, VPN_MONTHLY_AMOUNT)
             send_message(chat_id, "Если у вас не получается оплатить (в РФ не работает ApplePay), попробуйте купить звезды через @PremiumBot и вернитесь сюда и нажмите кнопку оплаты.", parse_mode='html')
         else:
             # Regular message handling
