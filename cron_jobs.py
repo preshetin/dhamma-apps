@@ -35,14 +35,20 @@ def cron_upcoming_payment_check():
                     send_invoice(chat_id_int, amount=VPN_MONTHLY_AMOUNT, payload_data={"client_id": client.get("id")})
                     send_message(chat_id_int, "Если у вас не получается оплатить (в РФ не работает ApplePay), попробуйте купить звезды через @PremiumBot и вернитесь сюда и нажмите кнопку оплаты.", parse_mode='html')
                     
-                    send_slack_message("cron_upcoming_payment_check", "system", f"Sent invoice to {chat_id_int} for client `{email}`")
+                    send_slack_message("cron_upcoming_payment_check", "system", f"Sent invoice to {chat_id_int} for client `{email}` with amount {VPN_MONTHLY_AMOUNT} XTR")
                 except Exception as e:
                     print(f"Failed to send message to chat_id {chat_id}: {e}")
 
 if __name__ == '__main__':
   # cron_upcoming_payment_check()
     scheduler = BlockingScheduler()
-    scheduler.add_job(cron_upcoming_payment_check, 'interval', minutes=1)
+    scheduler.add_job(
+      cron_upcoming_payment_check,
+      'cron',
+      hour=14,
+      minute=11,
+      timezone='Europe/Moscow'  # GMT+3
+    )
     print("Starting scheduler...")
     try:
         scheduler.start()
