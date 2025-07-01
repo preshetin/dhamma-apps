@@ -45,8 +45,8 @@ if __name__ == '__main__':
     scheduler.add_job(
       cron_upcoming_payment_check,
       'cron',
-      hour=14,
-      minute=42,
+      hour=12,
+      minute=3,
       timezone='Europe/Moscow'  # GMT+3
     )
     print("Starting scheduler...")
