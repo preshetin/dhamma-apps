@@ -5,15 +5,10 @@ from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain import hub
-from pinecone import (Pinecone)
 import requests
 
 
 def get_answer_from_document(message, index_name, namespace):
-    # Initialize Pinecone
-    pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
-
     # Initialize the embeddings
     model_name = 'multilingual-e5-large'
     embeddings = PineconeEmbeddings(
