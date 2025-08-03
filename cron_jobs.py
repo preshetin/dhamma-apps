@@ -14,6 +14,7 @@ if os.getenv('FLASK_ENV') == 'development':
 def cron_upcoming_payment_check():
     print('cron_upcoming_payment_check called')
     send_slack_message("cron_upcoming_payment_check", "system", "hello")
+    return ''
     panel_client = PanelClient(
         base_url=os.environ.get('PANEL_BASE_URL'),
         username=os.environ.get('PANEL_USERNAME'),
