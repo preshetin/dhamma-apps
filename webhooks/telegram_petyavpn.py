@@ -67,7 +67,7 @@ def webhook_petyavpn():
     user_username = get_username(update)
     send_slack_message(user_username, 'foo 2', json.dumps(update))
 
-    # return '', 200
+    return '', 200
     
     # Handle callback query
     if 'callback_query' in update:
